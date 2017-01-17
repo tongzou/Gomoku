@@ -9,7 +9,9 @@ from gym import spaces
 import numpy as np
 from gym import error
 from gym.utils import seeding
+import string
 
+### Adversary policies ###
 def make_random_policy(np_random):
     def random_policy(state):
         possible_moves = GomokuEnv.get_possible_actions(state)
@@ -147,27 +149,25 @@ class GomokuEnv(gym.Env):
         board = self.state
         outfile = StringIO() if mode == 'ansi' else sys.stdout
 
+        outfile.write('To play: ')
+        outfile.write('black' if self.to_play == GomokuEnv.BLACK else 'white')
+        outfile.write('\n')
         outfile.write(' ' * 5)
         for j in range(board.shape[1]):
-            outfile.write(' ' +  str(j + 1) + '  | ')
+            outfile.write(' ' + string.ascii_uppercase[j])
         outfile.write('\n')
-        outfile.write(' ' * 5)
-        outfile.write('-' * (board.shape[1] * 6 - 1))
-        outfile.write('\n')
+        outfile.write(' ' * 4 + '+' + '-' * (board.shape[1] * 2 + 1) + '+\n')
         for i in range(board.shape[1]):
-            outfile.write(' ' * (2 + i * 3) +  str(i + 1) + '  |')
+            outfile.write(' ' * 2 + str(board.shape[1] - i) + ' | ')
             for j in range(board.shape[1]):
                 if board[2, i, j] == 1:
-                    outfile.write('  O  ')
+                    outfile.write('. ')
                 elif board[0, i, j] == 1:
-                    outfile.write('  B  ')
+                    outfile.write('X ')
                 else:
-                    outfile.write('  W  ')
-                outfile.write('|')
-            outfile.write('\n')
-            outfile.write(' ' * (i * 3 + 1))
-            outfile.write('-' * (board.shape[1] * 7 - 1))
-            outfile.write('\n')
+                    outfile.write('O ')
+            outfile.write('|\n')
+        outfile.write(' ' * 4 + '+' + '-' * (board.shape[1] * 2 + 1) + '+\n')
 
         if mode != 'human':
             return outfile
