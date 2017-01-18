@@ -229,8 +229,8 @@ class GomokuEnv(gym.Env):
         # Returns 1 if player 1 wins, -1 if player 2 wins and 0 otherwise
         d = board.shape[1]
 
-        player_board = board[0, :, :]
         # test horizontal and vertical
+        player_board = board[0, :, :]
         if (GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board))):
             return 1
 
