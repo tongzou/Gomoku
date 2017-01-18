@@ -10,6 +10,19 @@ import numpy as np
 from gym import error
 from gym.utils import seeding
 import string
+import re
+
+def shift(xs, n):
+    if n == 0:
+        return xs[0:]
+    e = np.zeros(xs.shape)
+    if n > 0:
+        e[:n] = 0
+        e[n:] = xs[:-n]
+    else:
+        e[n:] = 0
+        e[:n] = xs[-n:]
+    return e
 
 ### Adversary policies ###
 def make_random_policy(np_random):
@@ -102,8 +115,6 @@ class GomokuEnv(gym.Env):
         if self.done:
             return self.state, 0., True, {'state': self.state}
 
-        # if GomokuEnv.pass_move(self.board_size, action):
-        #     pass
         if GomokuEnv.resign_move(self.board_size, action):
             return self.state, -1, True, {'state': self.state}
         elif not GomokuEnv.valid_move(self.state, action):
@@ -121,9 +132,6 @@ class GomokuEnv(gym.Env):
         # Opponent play
         a = self.opponent_policy(self.state)
 
-        # if GomokuEnv.pass_move(self.board_size, action):
-        #     pass
-
         # Making move if there are moves left
         if a is not None:
             if GomokuEnv.resign_move(self.board_size, a):
@@ -136,12 +144,6 @@ class GomokuEnv(gym.Env):
             reward = - reward
         self.done = reward != 0
         return self.state, reward, self.done, {'state': self.state}
-
-    # def _reset_opponent(self):
-    #     if self.opponent == 'random':
-    #         self.opponent_policy = random_policy
-    #     else:
-    #         raise error.Error('Unrecognized opponent policy {}'.format(self.opponent))
 
     def _render(self, mode='human', close=False):
         if close:
@@ -171,10 +173,6 @@ class GomokuEnv(gym.Env):
 
         if mode != 'human':
             return outfile
-
-    # @staticmethod
-    # def pass_move(board_size, action):
-    #     return action == board_size ** 2
 
     @staticmethod
     def resign_move(board_size, action):
@@ -208,101 +206,53 @@ class GomokuEnv(gym.Env):
         return [GomokuEnv.coordinate_to_action(board, [x, y]) for x, y in zip(free_x, free_y)]
 
     @staticmethod
+    def test_horizontal(player_board):
+        d = player_board.shape[0]
+        state = ''
+        for i in range(d):
+            state += ''.join(map(str, player_board[i].astype(int))) + '-'
+
+        return re.search('1{5}', state)
+
+    @staticmethod
     def game_finished(board):
         # Returns 1 if player 1 wins, -1 if player 2 wins and 0 otherwise
         d = board.shape[1]
 
-        inpath = set()
-        newset = set()
+        player_board = board[0, :, :]
+        # test horizontal and vertical
+        if (GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board))):
+            return 1
+
+        # test diagonal
+        player_board2 = np.zeros((d, d))
+
         for i in range(d):
-            if board[0, 0, i] == 1:
-                newset.add(i)
+            player_board2[i] = shift(player_board[i, :], i)
+        if (GomokuEnv.test_horizontal(np.transpose(player_board2))):
+            return 1
 
-        while len(newset) > 0:
-            for i in range(len(newset)):
-                v = newset.pop()
-                inpath.add(v)
-                cx = v // d
-                cy = v % d
-                # Left
-                if cy > 0 and board[0, cx, cy - 1] == 1:
-                    v = cx * d + cy - 1
-                    if v not in inpath:
-                        newset.add(v)
-                # Right
-                if cy + 1 < d and board[0, cx, cy + 1] == 1:
-                    v = cx * d + cy + 1
-                    if v not in inpath:
-                        newset.add(v)
-                # Up
-                if cx > 0 and board[0, cx - 1, cy] == 1:
-                    v = (cx - 1) * d + cy
-                    if v not in inpath:
-                        newset.add(v)
-                # Down
-                if cx + 1 < d and board[0, cx + 1, cy] == 1:
-                    if cx + 1 == d - 1:
-                        return 1
-                    v = (cx + 1) * d + cy
-                    if v not in inpath:
-                        newset.add(v)
-                # Up Right
-                if cx > 0 and cy + 1 < d and board[0, cx - 1, cy + 1] == 1:
-                    v = (cx - 1) * d + cy + 1
-                    if v not in inpath:
-                        newset.add(v)
-                # Down Left
-                if cx + 1 < d and cy > 0 and board[0, cx + 1, cy - 1] == 1:
-                    if cx + 1 == d - 1:
-                        return 1
-                    v = (cx + 1) * d + cy - 1
-                    if v not in inpath:
-                        newset.add(v)
-
-        inpath.clear()
-        newset.clear()
+        # test diagonal the other way
         for i in range(d):
-            if board[1, i, 0] == 1:
-                newset.add(i)
+            player_board2[i] = shift(player_board[i, :], -i)
+        if (GomokuEnv.test_horizontal(np.transpose(player_board2))):
+            return 1
 
-        while len(newset) > 0:
-            for i in range(len(newset)):
-                v = newset.pop()
-                inpath.add(v)
-                cy = v // d
-                cx = v % d
-                # Left
-                if cy > 0 and board[1, cx, cy - 1] == 1:
-                    v = (cy - 1) * d + cx
-                    if v not in inpath:
-                        newset.add(v)
-                # Right
-                if cy + 1 < d and board[1, cx, cy + 1] == 1:
-                    if cy + 1 == d - 1:
-                        return -1
-                    v = (cy + 1) * d + cx
-                    if v not in inpath:
-                        newset.add(v)
-                # Up
-                if cx > 0 and board[1, cx - 1, cy] == 1:
-                    v = cy * d + cx - 1
-                    if v not in inpath:
-                        newset.add(v)
-                # Down
-                if cx + 1 < d and board[1, cx + 1, cy] == 1:
-                    v = cy * d + cx + 1
-                    if v not in inpath:
-                        newset.add(v)
-                # Up Right
-                if cx > 0 and cy + 1 < d and board[1, cx - 1, cy + 1] == 1:
-                    if cy + 1 == d - 1:
-                        return -1
-                    v = (cy + 1) * d + cx - 1
-                    if v not in inpath:
-                        newset.add(v)
-                # Left Down
-                if cx + 1 < d and cy > 0 and board[1, cx + 1, cy - 1] == 1:
-                    v = (cy - 1) * d + cx + 1
-                    if v not in inpath:
-                        newset.add(v)
+        # test player 2 horizontal and vertical
+        player_board = board[1, :, :]
+        if (GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board))):
+            return -1
+
+        # test diagonal
+        for i in range(d):
+            player_board2[i] = shift(player_board[i, :], i)
+        if (GomokuEnv.test_horizontal(np.transpose(player_board2))):
+            return -1
+
+        # test diagonal the other way
+        for i in range(d):
+            player_board2[i] = shift(player_board[i, :], -i)
+        if (GomokuEnv.test_horizontal(np.transpose(player_board2))):
+            return -1
+
         return 0
