@@ -25,16 +25,20 @@ gym.envs.registration.register(
 )
 
 env = gym.make("Gomoku9x9-v0")
-env.reset()
 
-def step(action):
-    observation, reward, done, info = env.step(action)
+def test_env(start, dir):
+    # test diagonal win
+    env.reset()
+    if dir == 'forward':
+        for i in range(5):
+            observation, reward, done, info = env.step(start + i * 8)
+    else:
+        for i in range(5):
+            observation, reward, done, info = env.step(start + i * 10)
     env.render()
-    print 'reward:' + str(reward) + ';done:' + str(done)
+    assert reward == 1
 
-step(5)
-step(13)
-step(21)
-step(29)
-step(45)
-step(37)
+test_env(35, 'forward')
+test_env(36, 'backward')
+
+
