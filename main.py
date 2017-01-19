@@ -24,7 +24,7 @@ gym.envs.registration.register(
     }
 )
 
-env = gym.make("Gomoku9x9-v0")
+env = gym.make("Gomoku15x15-v0")
 
 def test_diag(start, dir):
     # test diagonal win

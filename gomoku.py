@@ -12,6 +12,7 @@ from gym.utils import seeding
 import string
 import re
 
+
 def shift(xs, n):
     if n == 0:
         return xs[:]
@@ -24,7 +25,8 @@ def shift(xs, n):
         e[:n] = xs[-n:]
     return e
 
-### Adversary policies ###
+
+# Adversary policies #
 def make_random_policy(np_random):
     def random_policy(state):
         possible_moves = GomokuEnv.get_possible_actions(state)
@@ -34,6 +36,7 @@ def make_random_policy(np_random):
         a = np_random.randint(len(possible_moves))
         return possible_moves[a]
     return random_policy
+
 
 class GomokuEnv(gym.Env):
     """
@@ -120,9 +123,7 @@ class GomokuEnv(gym.Env):
         if GomokuEnv.resign_move(self.board_size, action):
             return self.state, -1, True, {'state': self.state}
         elif not GomokuEnv.valid_move(self.state, action):
-            if self.illegal_move_mode == 'raise':
-                raise
-            elif self.illegal_move_mode == 'lose':
+            if self.illegal_move_mode == 'lose':
                 # Automatic loss on illegal move
                 self.done = True
                 return self.state, -1., True, {'state': self.state}
@@ -157,29 +158,36 @@ class GomokuEnv(gym.Env):
         outfile.write('To play: ')
         outfile.write('black' if self.to_play == GomokuEnv.BLACK else 'white')
         outfile.write('\n')
-        outfile.write(' ' * 5)
-        for j in range(board.shape[1]):
-            outfile.write(' ' + string.ascii_uppercase[j])
+        d = board.shape[1]
+        if d > 9:
+            outfile.write(' ' * 24)
+            for j in range(10, d + 1):
+                outfile.write(' ' + str(j/10))
+            outfile.write('\n')
+        outfile.write(' ' * 6)
+        for j in range(d):
+            #outfile.write(' ' + string.ascii_uppercase[j])
+            outfile.write(' ' + str((j + 1) % 10))
         outfile.write('\n')
-        outfile.write(' ' * 4 + '+' + '-' * (board.shape[1] * 2 + 1) + '+\n')
-        for i in range(board.shape[1]):
-            outfile.write(' ' * 2 + str(board.shape[1] - i) + ' | ')
-            for j in range(board.shape[1]):
+        outfile.write(' ' * 5 + '+' + '-' * (d * 2 + 1) + '+\n')
+        for i in range(d):
+            outfile.write(' ' * (3 if i < 9 else 2) + str(i + 1) + ' | ')
+            for j in range(d):
                 a = GomokuEnv.coordinate_to_action(board, [i, j])
                 if board[2, i, j] == 1:
                     outfile.write('. ')
                 elif board[0, i, j] == 1:
-                    if (self.prev_move == a):
+                    if self.prev_move == a:
                         outfile.write('X)')
                     else:
                         outfile.write('X ')
                 else:
-                    if (self.prev_move == a):
+                    if self.prev_move == a:
                         outfile.write('O)')
                     else:
                         outfile.write('O ')
             outfile.write('|\n')
-        outfile.write(' ' * 4 + '+' + '-' * (board.shape[1] * 2 + 1) + '+\n')
+        outfile.write(' ' * 5 + '+' + '-' * (d * 2 + 1) + '+\n')
 
         if mode != 'human':
             return outfile
@@ -231,32 +239,32 @@ class GomokuEnv(gym.Env):
 
         # test horizontal and vertical
         player_board = board[0, :, :]
-        if (GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board))):
+        if GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board)):
             return 1
 
         # test diagonal
         for i in range(d-4):
-            player_board2 = np.zeros((d, d), dtype=int)
-            player_board3 = np.zeros((d, d), dtype=int)
+            forward = np.zeros((d, d), dtype=int)
+            backward = np.zeros((d, d), dtype=int)
             for j in range(i, i + 5):
-                player_board2[j] = shift(player_board[j, :], j - i)
-                player_board3[j] = shift(player_board[j, :], i - j)
-            if (GomokuEnv.test_horizontal(np.transpose(player_board2)) or GomokuEnv.test_horizontal(np.transpose(player_board3))):
+                forward[j] = shift(player_board[j, :], j - i)
+                backward[j] = shift(player_board[j, :], i - j)
+            if GomokuEnv.test_horizontal(np.transpose(forward)) or GomokuEnv.test_horizontal(np.transpose(backward)):
                 return 1
 
         # test player 2 horizontal and vertical
         player_board = board[1, :, :]
-        if (GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board))):
+        if GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board)):
             return -1
 
         # test diagonal
         for i in range(d-4):
-            player_board2 = np.zeros((d, d), dtype=int)
-            player_board3 = np.zeros((d, d), dtype=int)
+            forward = np.zeros((d, d), dtype=int)
+            backward = np.zeros((d, d), dtype=int)
             for j in range(i, i + 5):
-                player_board2[j] = shift(player_board[j, :], j - i)
-                player_board3[j] = shift(player_board[j, :], i - j)
-            if (GomokuEnv.test_horizontal(np.transpose(player_board2)) or GomokuEnv.test_horizontal(np.transpose(player_board3))):
+                forward[j] = shift(player_board[j, :], j - i)
+                backward[j] = shift(player_board[j, :], i - j)
+            if GomokuEnv.test_horizontal(np.transpose(forward)) or GomokuEnv.test_horizontal(np.transpose(backward)):
                 return -1
 
         return 0
