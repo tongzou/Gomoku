@@ -1,17 +1,14 @@
 """
 Game of Gomoku
 """
-
-from six import StringIO
 import sys
+import numpy as np
+import re
 import gym
 from gym import spaces
-import numpy as np
 from gym import error
 from gym.utils import seeding
-import string
-import re
-
+from six import StringIO
 
 def shift(xs, n):
     if n == 0:
@@ -108,7 +105,7 @@ class GomokuEnv(gym.Env):
 
         # Let the opponent play if it's not the agent's turn
         if self.player_color != self.to_play:
-            a = self.opponent_policy(self.state)
+            a = self.opponent_policy(self.state, None, None)
             GomokuEnv.make_move(self.state, a, GomokuEnv.BLACK)
             self.to_play = GomokuEnv.WHITE
             self.prev_move = a
@@ -120,6 +117,7 @@ class GomokuEnv(gym.Env):
         if self.done:
             return self.state, 0., True, {'state': self.state}
 
+        prev_state = self.state
         if GomokuEnv.resign_move(self.board_size, action):
             return self.state, -1, True, {'state': self.state}
         elif not GomokuEnv.valid_move(self.state, action):
@@ -133,7 +131,7 @@ class GomokuEnv(gym.Env):
             GomokuEnv.make_move(self.state, action, self.player_color)
 
         # Opponent play
-        a = self.opponent_policy(self.state)
+        a = self.opponent_policy(self.state, prev_state, action)
 
         # Making move if there are moves left
         if a is not None:
