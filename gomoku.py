@@ -25,8 +25,8 @@ def shift(xs, n):
 
 # Adversary policies #
 def make_random_policy(np_random):
-    def random_policy(state):
-        possible_moves = GomokuEnv.get_possible_actions(state)
+    def random_policy(curr_state, prev_state, prev_action):
+        possible_moves = GomokuEnv.get_possible_actions(curr_state)
         # No moves left
         if len(possible_moves) == 0:
             return None
