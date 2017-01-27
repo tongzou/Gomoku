@@ -3,6 +3,7 @@ import cPickle as pickle
 import gym
 from gomoku import GomokuEnv
 
+from datetime import datetime
 import os
 
 def cls():
@@ -109,8 +110,8 @@ class Agent:
         aprob, h = policy_forward(model, x)
         mask = np.zeros(self.D, dtype=int)
         mask[GomokuEnv.get_possible_actions(observation)] = 1
-        aprob = np.multiply(aprob, mask)
-        action = np.random.choice(np.where(aprob == aprob.max())[0])
+        newprob = np.multiply(aprob, mask)
+        action = np.random.choice(np.where(newprob == newprob.max())[0])
         return action, x, aprob, h
 
     '''
@@ -119,7 +120,11 @@ class Agent:
         gamma:  # discount factor for reward
         decay_rate:  # decay factor for RMSProp leaky sum of grad^2
     '''
-    def learn(self, render=False, model_threshold=0.9, min_episodes=1000, batch_size=10, learning_rate=1e-4, gamma=0.99, decay_rate=0.99):
+    def learn(self, render=False, model_threshold=0.8, min_episodes=100, batch_size=10, learning_rate=1e-4, gamma=0.99, decay_rate=0.99):
+        # setup logging
+        log = open("log.txt", 'wb')
+        log.write("learning log - " + str(datetime.now()) + "\n")
+
         env = self.create_env()
         observation = env.reset()
         xs, hs, dlogps, drs = [], [], [], []
@@ -127,12 +132,12 @@ class Agent:
         reward_sum = 0
         episode_number = 0
 
-        print self.model
         if self.model is None:
             self.model = self.get_random_model()
 
         # initialize component for self play.
         env.opponent_policy = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
+        log.write('Setting opponent model\n' + str(self.model) + '\n')
         opponent_episode_number = 0
 
         grad_buffer = {k: np.zeros_like(v) for k, v in self.model.iteritems()}  # update buffers that add up gradients over a batch
@@ -197,7 +202,8 @@ class Agent:
 
                 # replace the opponent model once our running_reward is over the threshold and min_episodes is met
                 if running_reward > model_threshold and opponent_episode_number > min_episodes:
-                    print 'replace opponent model now.' + '#'*50
+                    log.write('replace opponent model now: ep ' + str(episode_number) + '\n' + str(self.model) + '\n' +
+                              'running mean: ' + str(running_reward) + '\n')
                     env.opponent_policy = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
                     opponent_episode_number = 0
                     running_reward = 0
