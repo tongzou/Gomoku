@@ -77,7 +77,7 @@ while True:
         print "Please enter a valid choice."
 
 if mode == 1:
-    agent.learn()
+    agent.learn(render=False)
 elif mode == 2:
     agent.play(GomokuEnv.BLACK)
 else:

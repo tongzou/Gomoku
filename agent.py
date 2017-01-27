@@ -2,7 +2,6 @@ import numpy as np
 import cPickle as pickle
 import gym
 from gomoku import GomokuEnv
-import random
 
 import os
 
@@ -111,7 +110,7 @@ class Agent:
         mask = np.zeros(self.D, dtype=int)
         mask[GomokuEnv.get_possible_actions(observation)] = 1
         aprob = np.multiply(aprob, mask)
-        action = np.random.choice(np.where(aprob==aprob.max())[0])
+        action = np.random.choice(np.where(aprob == aprob.max())[0])
         return action, x, aprob, h
 
     '''
@@ -128,6 +127,7 @@ class Agent:
         reward_sum = 0
         episode_number = 0
 
+        print self.model
         if self.model is None:
             self.model = self.get_random_model()
 
@@ -159,6 +159,8 @@ class Agent:
             drs.append(reward)  # record reward (has to be done after we call step() to get reward for previous action)
 
             if done:  # an episode finished
+                if render:
+                    env.render()
                 episode_number += 1
                 opponent_episode_number += 1
 
@@ -250,6 +252,8 @@ class Agent:
             action = GomokuEnv.coordinate_to_action(observation, action)
             observation, reward, done, info = env.step(action)
             if done:
+                cls()
+                env.render()
                 if reward == 1:
                     print "You Win!"
                 else:

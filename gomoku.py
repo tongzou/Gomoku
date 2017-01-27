@@ -129,6 +129,7 @@ class GomokuEnv(gym.Env):
                 raise error.Error('Unsupported illegal move action: {}'.format(self.illegal_move_mode))
         else:
             GomokuEnv.make_move(self.state, action, self.player_color)
+            self.prev_move = action
 
         # Opponent play
         a = self.opponent_policy(self.state, prev_state, action)
@@ -139,12 +140,16 @@ class GomokuEnv(gym.Env):
                 return self.state, 1, True, {'state': self.state}
             else:
                 GomokuEnv.make_move(self.state, a, 1 - self.player_color)
-                self.prev_move = a
 
-        reward = GomokuEnv.game_finished(self.state)
-        if self.player_color == GomokuEnv.WHITE:
-            reward = - reward
+        reward = GomokuEnv.game_finished(self.state, self.player_color)
         self.done = reward != 0
+
+        # check to see if we need to roll back opponent move if we have won already.
+        if reward == 1 and a is not None:
+            GomokuEnv.revert_move(self.state, a, 1 - self.player_color)
+            pass
+        else:
+            self.prev_move = a
         return self.state, reward, self.done, {'state': self.state}
 
     def _render(self, mode='human', close=False):
@@ -209,6 +214,12 @@ class GomokuEnv(gym.Env):
         board[player, coords[0], coords[1]] = 1
 
     @staticmethod
+    def revert_move(board, action, player):
+        coords = GomokuEnv.action_to_coordinate(board, action)
+        board[2, coords[0], coords[1]] = 1
+        board[player, coords[0], coords[1]] = 0
+
+    @staticmethod
     def coordinate_to_action(board, coords):
         return coords[0] * board.shape[-1] + coords[1]
 
@@ -231,12 +242,12 @@ class GomokuEnv(gym.Env):
         return re.search('1{5}', state)
 
     @staticmethod
-    def game_finished(board):
-        # Returns 1 if player 1 wins, -1 if player 2 wins and 0 otherwise
+    def game_finished(board, first_color):
+        # Returns 1 if first_color wins, -1 if first_color loses and 0 otherwise
         d = board.shape[1]
 
         # test horizontal and vertical
-        player_board = board[0, :, :]
+        player_board = board[first_color, :, :]
         if GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board)):
             return 1
 
@@ -251,7 +262,7 @@ class GomokuEnv(gym.Env):
                 return 1
 
         # test player 2 horizontal and vertical
-        player_board = board[1, :, :]
+        player_board = board[1 - first_color, :, :]
         if GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board)):
             return -1
 
