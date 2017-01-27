@@ -1,18 +1,14 @@
 import numpy as np
 import cPickle as pickle
 import gym
-from gym.utils import seeding
-import opponent
 from gomoku import GomokuEnv
+import random
 
 import os
 
 def cls():
-    try:
-        os.system('cls')  # For Windows
-        os.system('clear')  # For Linux/OS X
-    except:
-        pass
+    os.system('cls')  # For Windows
+    os.system('clear')  # For Linux/OS X
 
 
 def sigmoid(x):
@@ -97,7 +93,8 @@ class Agent:
     def get_opponent_policy(self, model, color):
         old_model = model.copy()
         def opponent_policy(curr_state, prev_state, prev_action):
-            return self.choose_move(curr_state, old_model, color)
+            action, _, _, _ = self.choose_move(curr_state, old_model, color)
+            return action
 
         return opponent_policy
 
@@ -135,7 +132,7 @@ class Agent:
             self.model = self.get_random_model()
 
         # initialize component for self play.
-        env.opponent = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
+        env.opponent_policy = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
         opponent_episode_number = 0
 
         grad_buffer = {k: np.zeros_like(v) for k, v in self.model.iteritems()}  # update buffers that add up gradients over a batch
@@ -199,7 +196,7 @@ class Agent:
                 # replace the opponent model once our running_reward is over the threshold and min_episodes is met
                 if running_reward > model_threshold and opponent_episode_number > min_episodes:
                     print 'replace opponent model now.' + '#'*50
-                    env.opponent = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
+                    env.opponent_policy = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
                     opponent_episode_number = 0
                     running_reward = 0
 
@@ -241,7 +238,7 @@ class Agent:
             self.model = self.get_random_model()
 
         env = self.create_env(1 - color)
-        env.opponent = self.get_opponent_policy(self.model, color)
+        env.opponent_policy = self.get_opponent_policy(self.model, color)
         observation = env.reset()
         env.render()
 
