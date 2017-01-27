@@ -204,6 +204,7 @@ class Agent:
                 if running_reward > model_threshold and opponent_episode_number > min_episodes:
                     log.write('replace opponent model now: ep ' + str(episode_number) + '\n' + str(self.model) + '\n' +
                               'running mean: ' + str(running_reward) + '\n')
+                    log.flush()
                     env.opponent_policy = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
                     opponent_episode_number = 0
                     running_reward = 0
