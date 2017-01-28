@@ -126,7 +126,6 @@ class GomokuEnv(gym.Env):
                 self.done = True
                 return self.state, -1., True, {'state': self.state}
             else:
-                print action
                 raise error.Error('Unsupported illegal move action: {}'.format(self.illegal_move_mode))
         else:
             GomokuEnv.make_move(self.state, action, self.player_color)

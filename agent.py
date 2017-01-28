@@ -3,6 +3,7 @@ import cPickle as pickle
 import gym
 from gomoku import GomokuEnv
 from gym import error
+import random
 
 from datetime import datetime
 import os
@@ -90,7 +91,7 @@ class Agent:
     # return a random model
     def get_random_model(self):
         return {'W1': np.random.randn(self.H, self.D) / np.sqrt(self.D),
-                'W2': np.random.randn(self.D, self.H) / np.sqrt(self.H)}
+                'W2': np.random.randn(self.D + 1, self.H) / np.sqrt(self.H)}
 
 
     def get_opponent_policy(self, model, color):
@@ -124,14 +125,17 @@ class Agent:
         # forward the policy network and sample an action from the returned probability
         aprob, h = policy_forward(model, x)
         possible_moves = GomokuEnv.get_possible_actions(observation)
-        mask = np.zeros(self.D, dtype=int)
+        if len(possible_moves) == 0:
+            return self.D, x, aprob, h  # resign
+
+        mask = np.zeros(self.D + 1, dtype=int)
         mask[possible_moves] = 1
         newprob = np.multiply(aprob, mask)
         max = newprob.max()
         if max == 0:
-            #self.log.write('all probabilies are zero!!!!\n')
-            raise error.Error('all probabilites are zero!!!')
-            # action = np.random.choice(possible_moves)
+            self.log.write('all probabilies are zero!!!!\n')
+            #raise error.Error('all probabilites are zero!!!')
+            action = random.choice(possible_moves)
         else:
             action = np.random.choice(np.where(newprob == max)[0])
         #aprob = np.multiply(aprob, mask)
@@ -290,3 +294,4 @@ class Agent:
                     print "You Win!"
                 else:
                     print "You Lost!"
+                exit()
