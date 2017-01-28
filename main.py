@@ -13,7 +13,7 @@ gym.envs.registration.register(
         #'opponent': opponent.make_opponent_policy(9, 0.001),
         'opponent': 'random',
         'observation_type': 'numpy3c',
-        'illegal_move_mode': 'lose',
+        'illegal_move_mode': 'raise',
         'board_size': 9,
     }
 )
