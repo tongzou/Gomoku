@@ -2,11 +2,35 @@ import numpy as np
 import cPickle as pickle
 import gym
 from gomoku import GomokuEnv
-from gym import error
 import random
-
 from datetime import datetime
 import os
+
+gym.envs.registration.register(
+    id='Gomoku9x9-v0',
+    entry_point='gomoku:GomokuEnv',
+    kwargs={
+        'player_color': 'black',
+        #'opponent': opponent.make_opponent_policy(9, 0.001),
+        'opponent': 'random',
+        'observation_type': 'numpy3c',
+        'illegal_move_mode': 'raise',
+        'board_size': 9,
+    }
+)
+
+gym.envs.registration.register(
+    id='Gomoku15x15-v0',
+    entry_point='gomoku:GomokuEnv',
+    kwargs={
+        'player_color': 'black',
+        #'opponent': opponent.make_opponent_policy(15, 1),
+        'opponent': 'random',
+        'observation_type': 'numpy3c',
+        'illegal_move_mode': 'lose',
+        'board_size': 15,
+    }
+)
 
 def cls():
     os.system('cls')  # For Windows
@@ -66,18 +90,24 @@ class Agent:
         self.H = hidden
         self.D = self.N * self.N
         self.file_name = 'save' + str(self.N) + '.p'
-        self.log = open("log.txt", 'wb')
 
         self.model = None
+        self.logger = None
 
         # load the saved model first.
         if resume:
             try:
-                self.log.write('using saved model.\n')
+                self.log('using saved model.')
                 self.model = pickle.load(open('save' + str(self.N) + '.p', 'rb'))
             except Exception as e:
-                self.log.write('no saved model.\n')
+                self.log('no saved model.')
                 self.model = None
+
+    def log(self, message):
+        if self.logger is None:
+            self.logger = open("log.txt", 'ab')
+        self.logger.write(message + '\n')
+        self.logger.flush()
 
     def create_env(self, color=GomokuEnv.BLACK):
         if self.N == 15:
@@ -99,15 +129,14 @@ class Agent:
             # try to load it from file.
             try:
                 model = pickle.load(open('opponent' + str(self.N) + '.p', 'rb'))
-                self.log.write('using saved opponent model:\n' + str(model) + '\n')
+                self.log('using saved opponent model:\n' + str(model))
             except Exception as e:
                 model = self.get_random_model()
-                self.log.write('using random opponent model:\n' + str(model) + '\n')
+                self.log('using random opponent model:\n' + str(model))
         else:
-            self.log.write('using current opponent model:\n' + str(model) + '\n')
+            self.log('using current opponent model:\n' + str(model))
             model = model.copy()
 
-        self.log.flush()
         def opponent_policy(curr_state, prev_state, prev_action):
             action, _, _, _ = self.choose_move(curr_state, model, color)
             return action
@@ -133,8 +162,7 @@ class Agent:
         newprob = np.multiply(aprob, mask)
         max = newprob.max()
         if max == 0:
-            self.log.write('all probabilies are zero!!!!\n')
-            #raise error.Error('all probabilites are zero!!!')
+            self.log('all probabilies are zero!!!!')
             action = random.choice(possible_moves)
         else:
             action = np.random.choice(np.where(newprob == max)[0])
@@ -150,8 +178,7 @@ class Agent:
     '''
     def learn(self, render=False, model_threshold=0.8, min_episodes=100, batch_size=10, learning_rate=1e-4, gamma=0.99, decay_rate=0.99):
         # setup logging
-        self.log.write("start learning - " + str(datetime.now()) + "\n")
-        self.log.flush()
+        self.log("start learning - " + str(datetime.now()))
 
         env = self.create_env()
         observation = env.reset()
@@ -225,13 +252,12 @@ class Agent:
                         grad_buffer[k] = np.zeros_like(v)  # reset batch gradient buffer
 
                 running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
-                print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
+                #print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
 
                 # replace the opponent model once our running_reward is over the threshold and min_episodes is met
                 if running_reward > model_threshold and opponent_episode_number > min_episodes:
-                    self.log.write('replace opponent model now: ep ' + str(episode_number) + '\n' + str(self.model) + '\n' +
-                              'running mean: ' + str(running_reward) + '\n')
-                    self.log.flush()
+                    self.log('replace opponent model now: ep ' + str(episode_number) + '\n' +
+                              'running mean: ' + str(running_reward))
                     # save the opponent model
                     pickle.dump(self.model, open('opponent' + str(self.N) + '.p', 'wb'))
                     env.opponent_policy = self.get_opponent_policy(self.model, GomokuEnv.WHITE)
@@ -239,13 +265,16 @@ class Agent:
                     running_reward = 0
 
                 if episode_number % 100 == 0:
+                    message = 'ep: %d, running mean: %f' % (episode_number, running_reward)
+                    self.log(message)
+                    print message
                     pickle.dump(self.model, open('save' + str(self.N) + '.p', 'wb'))
 
                 reward_sum = 0
                 observation = env.reset()  # reset env
 
-            if reward != 0:  # Gomoku has either +1 or -1 reward exactly when game ends.
-                print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
+            #if reward != 0:  # Gomoku has either +1 or -1 reward exactly when game ends.
+            #    print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
 
     def trained_play(self, env):
         observation = env.reset()
@@ -294,4 +323,4 @@ class Agent:
                     print "You Win!"
                 else:
                     print "You Lost!"
-                exit()
+                return
