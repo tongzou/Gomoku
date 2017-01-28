@@ -129,8 +129,9 @@ class Agent:
         newprob = np.multiply(aprob, mask)
         max = newprob.max()
         if max == 0:
-            self.log.write('all probabilies are zero!!!!\n')
-            action = np.random.choice(possible_moves)
+            #self.log.write('all probabilies are zero!!!!\n')
+            raise error.Error('all probabilites are zero!!!')
+            # action = np.random.choice(possible_moves)
         else:
             action = np.random.choice(np.where(newprob == max)[0])
         #aprob = np.multiply(aprob, mask)
