@@ -48,7 +48,6 @@ def prepro(I, color=GomokuEnv.BLACK):
         I = np.subtract(I[0, :, :], I[1, :, :])
     else:
         I = np.subtract(I[1, :, :], I[0, :, :])
-
     return I.astype(np.float).ravel()
 
 
@@ -252,7 +251,7 @@ class Agent:
                         grad_buffer[k] = np.zeros_like(v)  # reset batch gradient buffer
 
                 running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
-                #print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
+                print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
 
                 # replace the opponent model once our running_reward is over the threshold and min_episodes is met
                 if running_reward > model_threshold and opponent_episode_number > min_episodes:
@@ -273,8 +272,8 @@ class Agent:
                 reward_sum = 0
                 observation = env.reset()  # reset env
 
-            #if reward != 0:  # Gomoku has either +1 or -1 reward exactly when game ends.
-            #    print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
+            if reward != 0:  # Gomoku has either +1 or -1 reward exactly when game ends.
+                print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
 
     def trained_play(self, env):
         observation = env.reset()

@@ -1,169 +1,733 @@
 using saved model.
-start learning - 2017-01-27 21:07:23.629000
-using saved opponent model:
-{'W2': array([[ 0.07723181, -0.11303955, -0.09131205, ..., -0.11682536,
-        -0.0132272 ,  0.10988871],
-       [-0.0060595 , -0.1251918 , -0.08958956, ..., -0.04276103,
-        -0.03626348, -0.00577747],
-       [ 0.01338618, -0.05802712,  0.01399495, ..., -0.08253099,
-         0.0918814 ,  0.02450224],
-       ...,
-       [ 0.08452524, -0.02261371, -0.05322923, ..., -0.01993291,
-         0.05699368, -0.07738449],
-       [ 0.08903254,  0.03545985,  0.0283653 , ...,  0.02480985,
-        -0.00736993, -0.05416551],
-       [-0.04356768,  0.06986452, -0.08460826, ..., -0.13621033,
-        -0.03716823, -0.01528226]]), 'W1': array([[ 0.09129485,  0.05610203, -0.02810366, ...,  0.03345396,
-         0.14334908,  0.00780625],
-       [ 0.08420803, -0.02362913,  0.03342608, ...,  0.0377042 ,
-        -0.15852782,  0.22327547],
-       [-0.08979687, -0.01747899, -0.07980005, ..., -0.10344877,
-        -0.04948265,  0.02700804],
-       ...,
-       [-0.00042128,  0.07560156, -0.02719243, ..., -0.10012802,
-        -0.04154154, -0.12852313],
-       [ 0.05894231,  0.20031187, -0.02962195, ...,  0.16968114,
-        -0.22726807,  0.00802052],
-       [ 0.04261507,  0.09306363, -0.15367244, ...,  0.06218321,
-         0.1481311 ,  0.04318932]])}
-replace opponent model now: ep 48821
-running mean: 0.801190323937
+no saved model.
+start learning - 2017-01-28 11:34:07.377000
+using random opponent model:
+{'W2': array([[ 0.09665838,  0.11477267, -0.09566993, ...,  0.04786805,
+        -0.03894176,  0.11584724],
+       [ 0.04914405,  0.0514745 , -0.02253764, ...,  0.01854597,
+        -0.05828665, -0.05103408],
+       [-0.02537407,  0.01793595,  0.10117528, ..., -0.03082778,
+         0.08042574, -0.0170685 ],
+       ..., 
+       [-0.03436286, -0.07634291, -0.06886423, ..., -0.03098308,
+         0.19289597,  0.01849034],
+       [-0.09233606, -0.0185755 , -0.08793188, ..., -0.10614217,
+         0.0096551 ,  0.07004065],
+       [ 0.05492875, -0.05935534, -0.00246488, ..., -0.01905869,
+        -0.04887876, -0.04508503]]), 'W1': array([[-0.16595398,  0.05034707, -0.12063711, ...,  0.08007843,
+         0.22621078,  0.13990101],
+       [-0.00723226, -0.11892672,  0.10316302, ...,  0.06641237,
+        -0.01904855, -0.14379426],
+       [-0.22614593,  0.06978197, -0.14650644, ..., -0.0285636 ,
+         0.00520837,  0.04965191],
+       ..., 
+       [-0.07413393,  0.07078794, -0.2090981 , ..., -0.05383407,
+         0.04185885, -0.03818406],
+       [-0.09816854,  0.18275608,  0.02692694, ..., -0.12320159,
+        -0.17312731,  0.08525111],
+       [ 0.04615775, -0.13129784,  0.08488947, ..., -0.11578441,
+        -0.12980356,  0.0214136 ]])}
+ep: 100, running mean: 0.443640
+ep: 200, running mean: 0.265284
+ep: 300, running mean: 0.198002
+ep: 400, running mean: 0.164388
+ep: 500, running mean: 0.029461
+ep: 600, running mean: 0.157849
+ep: 700, running mean: 0.257190
+ep: 800, running mean: 0.225892
+ep: 900, running mean: 0.058010
+ep: 1000, running mean: 0.156963
+ep: 1100, running mean: 0.148171
+ep: 1200, running mean: 0.338984
+ep: 1300, running mean: 0.228426
+ep: 1400, running mean: 0.379490
+ep: 1500, running mean: 0.444382
+ep: 1600, running mean: 0.416232
+ep: 1700, running mean: 0.425073
+ep: 1800, running mean: 0.463847
+ep: 1900, running mean: 0.460006
+ep: 2000, running mean: 0.513647
+ep: 2100, running mean: 0.436358
+ep: 2200, running mean: 0.486052
+ep: 2300, running mean: 0.530271
+ep: 2400, running mean: 0.546776
+ep: 2500, running mean: 0.509718
+ep: 2600, running mean: 0.445559
+ep: 2700, running mean: 0.643658
+ep: 2800, running mean: 0.568216
+ep: 2900, running mean: 0.695319
+ep: 3000, running mean: 0.733691
+ep: 3100, running mean: 0.742260
+ep: 3200, running mean: 0.630259
+ep: 3300, running mean: 0.733216
+ep: 3400, running mean: 0.694673
+ep: 3500, running mean: 0.644947
+ep: 3600, running mean: 0.669248
+ep: 3700, running mean: 0.658931
+ep: 3800, running mean: 0.781893
+replace opponent model now: ep 3826
+running mean: 0.800301799192
 using current opponent model:
-{'W2': array([[ 0.36737141,  0.08970986, -0.15398279, ...,  0.11770649,
-         0.21048123,  0.40431325],
-       [ 0.28906297,  0.08010028, -0.15843401, ...,  0.18660351,
-         0.188361  ,  0.28666298],
-       [ 0.30650721,  0.15114238, -0.04478912, ...,  0.15714819,
-         0.31332009,  0.32136712],
-       ...,
-       [ 0.37425223,  0.19570443, -0.11649218, ...,  0.21760687,
-         0.29129295,  0.22708528],
-       [ 0.37895317,  0.24240948, -0.01053535, ...,  0.26282269,
-         0.21622361,  0.24775564],
-       [ 0.25289528,  0.28397473, -0.13733245, ...,  0.11501842,
-         0.19322166,  0.29610744]]), 'W1': array([[ 0.10443672,  0.02084979,  0.0075811 , ...,  0.04398258,
-         0.1025886 , -0.00630842],
-       [ 0.1249562 , -0.08631288,  0.08039058, ...,  0.04575773,
-        -0.21224198,  0.23589691],
-       [-0.15864917, -0.03587881, -0.09248073, ..., -0.02985285,
-        -0.01096755,  0.0385784 ],
-       ...,
-       [ 0.02608593,  0.07074416,  0.02151663, ..., -0.09120874,
-        -0.05901272, -0.14627327],
-       [ 0.09982567,  0.16960628,  0.02899512, ...,  0.17249662,
-        -0.27263887, -0.00306152],
-       [ 0.05741574,  0.06683733, -0.13731329, ...,  0.07934191,
-         0.12639703,  0.00931822]])}
-
-using saved model.
-start learning - 2017-01-28 00:18:19.096000
-using saved opponent model:
-{'W2': array([[ 0.36737141,  0.08970986, -0.15398279, ...,  0.11770649,
-         0.21048123,  0.40431325],
-       [ 0.28906297,  0.08010028, -0.15843401, ...,  0.18660351,
-         0.188361  ,  0.28666298],
-       [ 0.30650721,  0.15114238, -0.04478912, ...,  0.15714819,
-         0.31332009,  0.32136712],
+{'W2': array([[-0.04418547, -0.07788522,  0.07114573, ..., -0.01685962,
+         0.09959878,  0.03818705],
+       [ 0.04375426, -0.13455776, -0.08117065, ...,  0.02427999,
+        -0.01424175, -0.08946683],
+       [-0.02203467, -0.02157486,  0.06747609, ...,  0.05847946,
+        -0.12158012,  0.03272896],
        ..., 
-       [ 0.37425223,  0.19570443, -0.11649218, ...,  0.21760687,
-         0.29129295,  0.22708528],
-       [ 0.37895317,  0.24240948, -0.01053535, ...,  0.26282269,
-         0.21622361,  0.24775564],
-       [ 0.25289528,  0.28397473, -0.13733245, ...,  0.11501842,
-         0.19322166,  0.29610744]]), 'W1': array([[ 0.10443672,  0.02084979,  0.0075811 , ...,  0.04398258,
-         0.1025886 , -0.00630842],
-       [ 0.1249562 , -0.08631288,  0.08039058, ...,  0.04575773,
-        -0.21224198,  0.23589691],
-       [-0.15864917, -0.03587881, -0.09248073, ..., -0.02985285,
-        -0.01096755,  0.0385784 ],
+       [ 0.009841  ,  0.08892318, -0.00411742, ...,  0.04016509,
+         0.04741441,  0.07008458],
+       [ 0.13193802,  0.02145316, -0.02179814, ...,  0.11870621,
+        -0.03661056,  0.07463367],
+       [-0.01839164,  0.00274701, -0.08803097, ..., -0.08605957,
+         0.06839659,  0.04759748]]), 'W1': array([[ 0.03830656,  0.09288565, -0.01132163, ...,  0.1206685 ,
+         0.21187212,  0.14724526],
+       [-0.05800316, -0.17030408,  0.03805621, ...,  0.11116137,
+         0.0480863 , -0.0452653 ],
+       [-0.24577094, -0.0164362 ,  0.24743617, ...,  0.1204533 ,
+        -0.07728919, -0.02999819],
        ..., 
-       [ 0.02608593,  0.07074416,  0.02151663, ..., -0.09120874,
-        -0.05901272, -0.14627327],
-       [ 0.09982567,  0.16960628,  0.02899512, ...,  0.17249662,
-        -0.27263887, -0.00306152],
-       [ 0.05741574,  0.06683733, -0.13731329, ...,  0.07934191,
-         0.12639703,  0.00931822]])}
-using saved model.
-start learning - 2017-01-28 00:26:07.621000
-using saved opponent model:
-{'W2': array([[ 0.36737141,  0.08970986, -0.15398279, ...,  0.11770649,
-         0.21048123,  0.40431325],
-       [ 0.28906297,  0.08010028, -0.15843401, ...,  0.18660351,
-         0.188361  ,  0.28666298],
-       [ 0.30650721,  0.15114238, -0.04478912, ...,  0.15714819,
-         0.31332009,  0.32136712],
-       ..., 
-       [ 0.37425223,  0.19570443, -0.11649218, ...,  0.21760687,
-         0.29129295,  0.22708528],
-       [ 0.37895317,  0.24240948, -0.01053535, ...,  0.26282269,
-         0.21622361,  0.24775564],
-       [ 0.25289528,  0.28397473, -0.13733245, ...,  0.11501842,
-         0.19322166,  0.29610744]]), 'W1': array([[ 0.10443672,  0.02084979,  0.0075811 , ...,  0.04398258,
-         0.1025886 , -0.00630842],
-       [ 0.1249562 , -0.08631288,  0.08039058, ...,  0.04575773,
-        -0.21224198,  0.23589691],
-       [-0.15864917, -0.03587881, -0.09248073, ..., -0.02985285,
-        -0.01096755,  0.0385784 ],
-       ..., 
-       [ 0.02608593,  0.07074416,  0.02151663, ..., -0.09120874,
-        -0.05901272, -0.14627327],
-       [ 0.09982567,  0.16960628,  0.02899512, ...,  0.17249662,
-        -0.27263887, -0.00306152],
-       [ 0.05741574,  0.06683733, -0.13731329, ...,  0.07934191,
-         0.12639703,  0.00931822]])}
-using saved model.
-start learning - 2017-01-28 00:28:11.646000
-using saved opponent model:
-{'W2': array([[ 0.36737141,  0.08970986, -0.15398279, ...,  0.11770649,
-         0.21048123,  0.40431325],
-       [ 0.28906297,  0.08010028, -0.15843401, ...,  0.18660351,
-         0.188361  ,  0.28666298],
-       [ 0.30650721,  0.15114238, -0.04478912, ...,  0.15714819,
-         0.31332009,  0.32136712],
-       ..., 
-       [ 0.37425223,  0.19570443, -0.11649218, ...,  0.21760687,
-         0.29129295,  0.22708528],
-       [ 0.37895317,  0.24240948, -0.01053535, ...,  0.26282269,
-         0.21622361,  0.24775564],
-       [ 0.25289528,  0.28397473, -0.13733245, ...,  0.11501842,
-         0.19322166,  0.29610744]]), 'W1': array([[ 0.10443672,  0.02084979,  0.0075811 , ...,  0.04398258,
-         0.1025886 , -0.00630842],
-       [ 0.1249562 , -0.08631288,  0.08039058, ...,  0.04575773,
-        -0.21224198,  0.23589691],
-       [-0.15864917, -0.03587881, -0.09248073, ..., -0.02985285,
-        -0.01096755,  0.0385784 ],
-       ..., 
-       [ 0.02608593,  0.07074416,  0.02151663, ..., -0.09120874,
-        -0.05901272, -0.14627327],
-       [ 0.09982567,  0.16960628,  0.02899512, ...,  0.17249662,
-        -0.27263887, -0.00306152],
-       [ 0.05741574,  0.06683733, -0.13731329, ...,  0.07934191,
-         0.12639703,  0.00931822]])}
-using saved model.
-start learning - 2017-01-28 00:28:55.144000
-using saved opponent model:
-{'W2': array([[ 0.36737141,  0.08970986, -0.15398279, ...,  0.11770649,
-         0.21048123,  0.40431325],
-       [ 0.28906297,  0.08010028, -0.15843401, ...,  0.18660351,
-         0.188361  ,  0.28666298],
-       [ 0.30650721,  0.15114238, -0.04478912, ...,  0.15714819,
-         0.31332009,  0.32136712],
-       ..., 
-       [ 0.37425223,  0.19570443, -0.11649218, ...,  0.21760687,
-         0.29129295,  0.22708528],
-       [ 0.37895317,  0.24240948, -0.01053535, ...,  0.26282269,
-         0.21622361,  0.24775564],
-       [ 0.25289528,  0.28397473, -0.13733245, ...,  0.11501842,
-         0.19322166,  0.29610744]]), 'W1': array([[ 0.10443672,  0.02084979,  0.0075811 , ...,  0.04398258,
-         0.1025886 , -0.00630842],
-       [ 0.1249562 , -0.08631288,  0.08039058, ...,  0.04575773,
-        -0.21224198,  0.23589691],
-       [-0.15864917, -0.03587881, -0.09248073, ..., -0.02985285,
-        -0.01096755,  0.0385784 ],
-       ..., 
-       [ 0.02608593,  0.07074416,  0.02151663, ..., -0.09120874,
-        -0.05901272, -0.14627327],
-       [ 0.09982567,  0.16960628,  0.02899512, ...,  0.17249662,
-        -0.27263887, -0.00306152],
-       [ 0.05741574,  0.06683733, -0.13731329, ...,  0.07934191,
-         0.12639703,  0.00931822]])}
+       [-0.06973832, -0.04182129, -0.03439961, ..., -0.13744731,
+         0.03620438,  0.02617752],
+       [-0.08632504,  0.08174264,  0.05012569, ..., -0.11373772,
+        -0.04796282,  0.12207205],
+       [-0.16941844,  0.13690102,  0.04014129, ...,  0.0958393 ,
+         0.08212725, -0.12007796]])}
+ep: 3900, running mean: -0.021442
+ep: 4000, running mean: 0.006869
+ep: 4100, running mean: 0.120421
+ep: 4200, running mean: 0.145986
+ep: 4300, running mean: 0.067694
+ep: 4400, running mean: -0.155095
+ep: 4500, running mean: 0.099235
+ep: 4600, running mean: 0.024335
+ep: 4700, running mean: 0.129995
+ep: 4800, running mean: 0.164746
+ep: 4900, running mean: 0.194433
+ep: 5000, running mean: 0.148588
+ep: 5100, running mean: 0.175224
+ep: 5200, running mean: 0.147895
+ep: 5300, running mean: 0.197907
+ep: 5400, running mean: 0.144603
+ep: 5500, running mean: 0.087238
+ep: 5600, running mean: 0.105801
+ep: 5700, running mean: 0.018306
+ep: 5800, running mean: -0.010545
+ep: 5900, running mean: 0.100026
+ep: 6000, running mean: 0.173417
+ep: 6100, running mean: 0.212286
+ep: 6200, running mean: 0.141496
+ep: 6300, running mean: 0.234537
+ep: 6400, running mean: 0.187044
+ep: 6500, running mean: 0.117824
+ep: 6600, running mean: 0.265458
+ep: 6700, running mean: 0.201381
+ep: 6800, running mean: 0.134011
+ep: 6900, running mean: -0.024844
+ep: 7000, running mean: 0.125207
+ep: 7100, running mean: 0.067554
+ep: 7200, running mean: 0.088737
+ep: 7300, running mean: 0.033710
+ep: 7400, running mean: -0.005429
+ep: 7500, running mean: 0.125057
+ep: 7600, running mean: 0.091045
+ep: 7700, running mean: 0.130048
+ep: 7800, running mean: 0.241885
+ep: 7900, running mean: 0.197120
+ep: 8000, running mean: 0.228547
+ep: 8100, running mean: 0.109771
+ep: 8200, running mean: 0.059961
+ep: 8300, running mean: 0.041753
+ep: 8400, running mean: -0.002697
+ep: 8500, running mean: 0.009806
+ep: 8600, running mean: 0.034117
+ep: 8700, running mean: 0.036931
+ep: 8800, running mean: 0.082413
+ep: 8900, running mean: -0.040284
+ep: 9000, running mean: 0.091454
+ep: 9100, running mean: -0.000987
+ep: 9200, running mean: -0.136667
+ep: 9300, running mean: -0.135415
+ep: 9400, running mean: -0.025821
+ep: 9500, running mean: 0.082294
+ep: 9600, running mean: -0.097700
+ep: 9700, running mean: -0.037464
+ep: 9800, running mean: -0.119899
+ep: 9900, running mean: -0.155491
+ep: 10000, running mean: -0.099726
+ep: 10100, running mean: -0.099003
+ep: 10200, running mean: -0.084645
+ep: 10300, running mean: -0.144271
+ep: 10400, running mean: -0.175026
+ep: 10500, running mean: -0.112740
+ep: 10600, running mean: -0.097493
+ep: 10700, running mean: -0.200086
+ep: 10800, running mean: -0.145727
+ep: 10900, running mean: -0.194014
+ep: 11000, running mean: -0.133735
+ep: 11100, running mean: -0.012022
+ep: 11200, running mean: -0.155369
+ep: 11300, running mean: -0.098271
+ep: 11400, running mean: -0.015017
+ep: 11500, running mean: -0.185414
+ep: 11600, running mean: -0.137815
+ep: 11700, running mean: -0.201551
+ep: 11800, running mean: -0.036791
+ep: 11900, running mean: -0.132227
+ep: 12000, running mean: -0.075732
+ep: 12100, running mean: -0.191479
+ep: 12200, running mean: -0.035429
+ep: 12300, running mean: -0.146890
+ep: 12400, running mean: -0.161716
+ep: 12500, running mean: -0.225157
+ep: 12600, running mean: -0.260708
+ep: 12700, running mean: -0.189706
+ep: 12800, running mean: -0.225419
+ep: 12900, running mean: -0.088581
+ep: 13000, running mean: -0.072666
+ep: 13100, running mean: 0.056522
+ep: 13200, running mean: -0.101536
+ep: 13300, running mean: -0.071298
+ep: 13400, running mean: -0.257887
+ep: 13500, running mean: -0.095503
+ep: 13600, running mean: -0.075373
+ep: 13700, running mean: -0.107919
+ep: 13800, running mean: -0.137327
+ep: 13900, running mean: -0.259334
+ep: 14000, running mean: -0.222837
+ep: 14100, running mean: -0.200810
+ep: 14200, running mean: -0.197635
+ep: 14300, running mean: -0.291139
+ep: 14400, running mean: -0.175492
+ep: 14500, running mean: -0.159550
+ep: 14600, running mean: -0.182016
+ep: 14700, running mean: -0.095682
+ep: 14800, running mean: -0.022949
+ep: 14900, running mean: -0.137671
+ep: 15000, running mean: -0.274253
+ep: 15100, running mean: -0.400745
+ep: 15200, running mean: -0.230724
+ep: 15300, running mean: -0.246804
+ep: 15400, running mean: -0.324646
+ep: 15500, running mean: -0.266780
+ep: 15600, running mean: -0.188756
+ep: 15700, running mean: -0.125288
+ep: 15800, running mean: -0.291798
+ep: 15900, running mean: -0.224204
+ep: 16000, running mean: -0.271779
+ep: 16100, running mean: -0.310624
+ep: 16200, running mean: -0.372385
+ep: 16300, running mean: -0.390155
+ep: 16400, running mean: -0.312266
+ep: 16500, running mean: -0.354517
+ep: 16600, running mean: -0.348688
+ep: 16700, running mean: -0.343291
+ep: 16800, running mean: -0.276781
+ep: 16900, running mean: -0.309419
+ep: 17000, running mean: -0.412872
+ep: 17100, running mean: -0.467277
+ep: 17200, running mean: -0.501054
+ep: 17300, running mean: -0.362896
+ep: 17400, running mean: -0.408811
+ep: 17500, running mean: -0.411052
+ep: 17600, running mean: -0.391430
+ep: 17700, running mean: -0.346407
+ep: 17800, running mean: -0.437710
+ep: 17900, running mean: -0.414027
+ep: 18000, running mean: -0.501571
+ep: 18100, running mean: -0.530346
+ep: 18200, running mean: -0.430439
+ep: 18300, running mean: -0.492098
+ep: 18400, running mean: -0.441567
+ep: 18500, running mean: -0.653635
+ep: 18600, running mean: -0.622935
+ep: 18700, running mean: -0.568421
+ep: 18800, running mean: -0.476886
+ep: 18900, running mean: -0.549696
+ep: 19000, running mean: -0.430899
+ep: 19100, running mean: -0.432367
+ep: 19200, running mean: -0.548126
+ep: 19300, running mean: -0.512874
+ep: 19400, running mean: -0.585496
+ep: 19500, running mean: -0.563140
+ep: 19600, running mean: -0.532598
+ep: 19700, running mean: -0.576667
+ep: 19800, running mean: -0.573094
+ep: 19900, running mean: -0.591460
+ep: 20000, running mean: -0.648900
+ep: 20100, running mean: -0.546788
+ep: 20200, running mean: -0.601937
+ep: 20300, running mean: -0.496019
+ep: 20400, running mean: -0.604013
+ep: 20500, running mean: -0.613610
+ep: 20600, running mean: -0.541093
+ep: 20700, running mean: -0.548991
+ep: 20800, running mean: -0.516986
+ep: 20900, running mean: -0.565218
+ep: 21000, running mean: -0.558719
+ep: 21100, running mean: -0.552732
+ep: 21200, running mean: -0.487405
+ep: 21300, running mean: -0.491288
+ep: 21400, running mean: -0.491734
+ep: 21500, running mean: -0.474150
+ep: 21600, running mean: -0.511493
+ep: 21700, running mean: -0.526926
+ep: 21800, running mean: -0.574554
+ep: 21900, running mean: -0.622356
+ep: 22000, running mean: -0.610164
+ep: 22100, running mean: -0.581360
+ep: 22200, running mean: -0.528121
+ep: 22300, running mean: -0.581432
+ep: 22400, running mean: -0.662481
+ep: 22500, running mean: -0.536301
+ep: 22600, running mean: -0.612816
+ep: 22700, running mean: -0.643394
+ep: 22800, running mean: -0.555390
+ep: 22900, running mean: -0.525098
+ep: 23000, running mean: -0.484309
+ep: 23100, running mean: -0.339173
+ep: 23200, running mean: -0.405742
+ep: 23300, running mean: -0.440703
+ep: 23400, running mean: -0.534805
+ep: 23500, running mean: -0.529762
+ep: 23600, running mean: -0.579136
+ep: 23700, running mean: -0.602679
+ep: 23800, running mean: -0.462225
+ep: 23900, running mean: -0.470858
+ep: 24000, running mean: -0.511549
+ep: 24100, running mean: -0.573870
+ep: 24200, running mean: -0.591702
+ep: 24300, running mean: -0.591824
+ep: 24400, running mean: -0.620555
+ep: 24500, running mean: -0.539786
+ep: 24600, running mean: -0.598141
+ep: 24700, running mean: -0.553188
+ep: 24800, running mean: -0.556799
+ep: 24900, running mean: -0.620000
+ep: 25000, running mean: -0.569812
+ep: 25100, running mean: -0.553687
+ep: 25200, running mean: -0.612351
+ep: 25300, running mean: -0.650918
+ep: 25400, running mean: -0.633826
+ep: 25500, running mean: -0.559736
+ep: 25600, running mean: -0.512377
+ep: 25700, running mean: -0.477975
+ep: 25800, running mean: -0.515487
+ep: 25900, running mean: -0.493200
+ep: 26000, running mean: -0.446061
+ep: 26100, running mean: -0.503107
+ep: 26200, running mean: -0.569343
+ep: 26300, running mean: -0.539070
+ep: 26400, running mean: -0.505282
+ep: 26500, running mean: -0.525319
+ep: 26600, running mean: -0.591820
+ep: 26700, running mean: -0.569843
+ep: 26800, running mean: -0.575403
+ep: 26900, running mean: -0.559290
+ep: 27000, running mean: -0.501678
+ep: 27100, running mean: -0.486719
+ep: 27200, running mean: -0.533337
+ep: 27300, running mean: -0.527802
+ep: 27400, running mean: -0.579922
+ep: 27500, running mean: -0.517909
+ep: 27600, running mean: -0.578694
+ep: 27700, running mean: -0.598803
+ep: 27800, running mean: -0.466933
+ep: 27900, running mean: -0.530352
+ep: 28000, running mean: -0.436332
+ep: 28100, running mean: -0.450319
+ep: 28200, running mean: -0.411021
+ep: 28300, running mean: -0.519233
+ep: 28400, running mean: -0.617625
+ep: 28500, running mean: -0.542424
+ep: 28600, running mean: -0.622987
+ep: 28700, running mean: -0.597313
+ep: 28800, running mean: -0.531408
+ep: 28900, running mean: -0.626557
+ep: 29000, running mean: -0.588436
+ep: 29100, running mean: -0.508185
+ep: 29200, running mean: -0.510167
+ep: 29300, running mean: -0.561079
+ep: 29400, running mean: -0.491207
+ep: 29500, running mean: -0.467794
+ep: 29600, running mean: -0.533196
+ep: 29700, running mean: -0.594053
+ep: 29800, running mean: -0.590147
+ep: 29900, running mean: -0.608386
+ep: 30000, running mean: -0.573363
+ep: 30100, running mean: -0.575106
+ep: 30200, running mean: -0.458129
+ep: 30300, running mean: -0.499535
+ep: 30400, running mean: -0.491531
+ep: 30500, running mean: -0.466839
+ep: 30600, running mean: -0.482563
+ep: 30700, running mean: -0.487783
+ep: 30800, running mean: -0.532280
+ep: 30900, running mean: -0.611312
+ep: 31000, running mean: -0.617648
+ep: 31100, running mean: -0.515528
+ep: 31200, running mean: -0.628933
+ep: 31300, running mean: -0.523581
+ep: 31400, running mean: -0.573804
+ep: 31500, running mean: -0.475377
+ep: 31600, running mean: -0.602283
+ep: 31700, running mean: -0.536152
+ep: 31800, running mean: -0.495939
+ep: 31900, running mean: -0.538897
+ep: 32000, running mean: -0.548164
+ep: 32100, running mean: -0.552210
+ep: 32200, running mean: -0.599827
+ep: 32300, running mean: -0.595331
+ep: 32400, running mean: -0.621670
+ep: 32500, running mean: -0.557152
+ep: 32600, running mean: -0.586749
+ep: 32700, running mean: -0.631826
+ep: 32800, running mean: -0.604495
+ep: 32900, running mean: -0.595597
+ep: 33000, running mean: -0.510202
+ep: 33100, running mean: -0.652610
+ep: 33200, running mean: -0.595875
+ep: 33300, running mean: -0.724831
+ep: 33400, running mean: -0.579315
+ep: 33500, running mean: -0.575612
+ep: 33600, running mean: -0.598656
+ep: 33700, running mean: -0.571778
+ep: 33800, running mean: -0.655361
+ep: 33900, running mean: -0.648266
+ep: 34000, running mean: -0.629749
+ep: 34100, running mean: -0.549724
+ep: 34200, running mean: -0.622731
+ep: 34300, running mean: -0.611181
+ep: 34400, running mean: -0.608756
+ep: 34500, running mean: -0.616584
+ep: 34600, running mean: -0.674476
+ep: 34700, running mean: -0.615960
+ep: 34800, running mean: -0.580759
+ep: 34900, running mean: -0.682775
+ep: 35000, running mean: -0.680918
+ep: 35100, running mean: -0.577107
+ep: 35200, running mean: -0.642081
+ep: 35300, running mean: -0.596041
+ep: 35400, running mean: -0.650958
+ep: 35500, running mean: -0.672573
+ep: 35600, running mean: -0.632350
+ep: 35700, running mean: -0.653648
+ep: 35800, running mean: -0.654230
+ep: 35900, running mean: -0.693524
+ep: 36000, running mean: -0.730595
+ep: 36100, running mean: -0.705762
+ep: 36200, running mean: -0.620966
+ep: 36300, running mean: -0.551226
+ep: 36400, running mean: -0.653767
+ep: 36500, running mean: -0.694070
+ep: 36600, running mean: -0.573015
+ep: 36700, running mean: -0.575689
+ep: 36800, running mean: -0.606449
+ep: 36900, running mean: -0.561100
+ep: 37000, running mean: -0.659053
+ep: 37100, running mean: -0.679465
+ep: 37200, running mean: -0.630763
+ep: 37300, running mean: -0.615300
+ep: 37400, running mean: -0.607679
+ep: 37500, running mean: -0.669750
+ep: 37600, running mean: -0.754395
+ep: 37700, running mean: -0.676309
+ep: 37800, running mean: -0.557159
+ep: 37900, running mean: -0.511903
+ep: 38000, running mean: -0.521670
+ep: 38100, running mean: -0.562243
+ep: 38200, running mean: -0.593156
+ep: 38300, running mean: -0.518796
+ep: 38400, running mean: -0.566272
+ep: 38500, running mean: -0.604124
+ep: 38600, running mean: -0.530103
+ep: 38700, running mean: -0.443726
+ep: 38800, running mean: -0.453948
+ep: 38900, running mean: -0.537865
+ep: 39000, running mean: -0.584331
+ep: 39100, running mean: -0.632777
+ep: 39200, running mean: -0.595294
+ep: 39300, running mean: -0.461732
+ep: 39400, running mean: -0.553745
+ep: 39500, running mean: -0.593467
+ep: 39600, running mean: -0.608495
+ep: 39700, running mean: -0.557474
+ep: 39800, running mean: -0.625190
+ep: 39900, running mean: -0.590628
+ep: 40000, running mean: -0.552259
+ep: 40100, running mean: -0.442889
+ep: 40200, running mean: -0.536997
+ep: 40300, running mean: -0.549350
+ep: 40400, running mean: -0.534482
+ep: 40500, running mean: -0.566061
+ep: 40600, running mean: -0.579342
+ep: 40700, running mean: -0.592052
+ep: 40800, running mean: -0.607577
+ep: 40900, running mean: -0.618726
+ep: 41000, running mean: -0.591367
+ep: 41100, running mean: -0.558910
+ep: 41200, running mean: -0.697641
+ep: 41300, running mean: -0.655004
+ep: 41400, running mean: -0.556486
+ep: 41500, running mean: -0.611918
+ep: 41600, running mean: -0.594473
+ep: 41700, running mean: -0.533851
+ep: 41800, running mean: -0.522415
+ep: 41900, running mean: -0.519950
+ep: 42000, running mean: -0.560534
+ep: 42100, running mean: -0.602169
+ep: 42200, running mean: -0.530872
+ep: 42300, running mean: -0.571368
+ep: 42400, running mean: -0.464720
+ep: 42500, running mean: -0.437196
+ep: 42600, running mean: -0.496790
+ep: 42700, running mean: -0.576145
+ep: 42800, running mean: -0.575464
+ep: 42900, running mean: -0.443951
+ep: 43000, running mean: -0.556021
+ep: 43100, running mean: -0.553688
+ep: 43200, running mean: -0.601962
+ep: 43300, running mean: -0.587242
+ep: 43400, running mean: -0.526363
+ep: 43500, running mean: -0.463779
+ep: 43600, running mean: -0.571469
+ep: 43700, running mean: -0.600517
+ep: 43800, running mean: -0.535440
+ep: 43900, running mean: -0.579973
+ep: 44000, running mean: -0.616588
+ep: 44100, running mean: -0.566758
+ep: 44200, running mean: -0.579805
+ep: 44300, running mean: -0.601163
+ep: 44400, running mean: -0.500642
+ep: 44500, running mean: -0.504748
+ep: 44600, running mean: -0.449748
+ep: 44700, running mean: -0.572284
+ep: 44800, running mean: -0.546368
+ep: 44900, running mean: -0.481885
+ep: 45000, running mean: -0.462054
+ep: 45100, running mean: -0.508718
+ep: 45200, running mean: -0.406786
+ep: 45300, running mean: -0.486612
+ep: 45400, running mean: -0.532469
+ep: 45500, running mean: -0.439645
+ep: 45600, running mean: -0.464452
+ep: 45700, running mean: -0.482371
+ep: 45800, running mean: -0.434522
+ep: 45900, running mean: -0.402048
+ep: 46000, running mean: -0.507303
+ep: 46100, running mean: -0.528861
+ep: 46200, running mean: -0.631676
+ep: 46300, running mean: -0.578000
+ep: 46400, running mean: -0.583941
+ep: 46500, running mean: -0.531176
+ep: 46600, running mean: -0.515240
+ep: 46700, running mean: -0.552570
+ep: 46800, running mean: -0.534573
+ep: 46900, running mean: -0.481488
+ep: 47000, running mean: -0.498231
+ep: 47100, running mean: -0.453907
+ep: 47200, running mean: -0.484670
+ep: 47300, running mean: -0.500297
+ep: 47400, running mean: -0.553548
+ep: 47500, running mean: -0.561147
+ep: 47600, running mean: -0.480750
+ep: 47700, running mean: -0.465314
+ep: 47800, running mean: -0.499649
+ep: 47900, running mean: -0.469730
+ep: 48000, running mean: -0.563343
+ep: 48100, running mean: -0.556845
+ep: 48200, running mean: -0.492139
+ep: 48300, running mean: -0.431131
+ep: 48400, running mean: -0.500730
+ep: 48500, running mean: -0.439193
+ep: 48600, running mean: -0.461361
+ep: 48700, running mean: -0.532512
+ep: 48800, running mean: -0.535849
+ep: 48900, running mean: -0.567755
+ep: 49000, running mean: -0.588008
+ep: 49100, running mean: -0.563473
+ep: 49200, running mean: -0.599285
+ep: 49300, running mean: -0.509225
+ep: 49400, running mean: -0.581232
+ep: 49500, running mean: -0.540447
+ep: 49600, running mean: -0.602671
+ep: 49700, running mean: -0.591947
+ep: 49800, running mean: -0.580378
+ep: 49900, running mean: -0.581718
+ep: 50000, running mean: -0.692770
+ep: 50100, running mean: -0.491835
+ep: 50200, running mean: -0.466359
+ep: 50300, running mean: -0.369185
+ep: 50400, running mean: -0.377318
+ep: 50500, running mean: -0.474193
+ep: 50600, running mean: -0.443321
+ep: 50700, running mean: -0.455488
+ep: 50800, running mean: -0.460662
+ep: 50900, running mean: -0.371319
+ep: 51000, running mean: -0.464856
+ep: 51100, running mean: -0.478831
+ep: 51200, running mean: -0.481536
+ep: 51300, running mean: -0.498436
+ep: 51400, running mean: -0.454898
+ep: 51500, running mean: -0.540971
+ep: 51600, running mean: -0.481932
+ep: 51700, running mean: -0.501728
+ep: 51800, running mean: -0.414281
+ep: 51900, running mean: -0.460533
+ep: 52000, running mean: -0.561610
+ep: 52100, running mean: -0.556733
+ep: 52200, running mean: -0.415952
+ep: 52300, running mean: -0.443512
+ep: 52400, running mean: -0.526444
+ep: 52500, running mean: -0.495128
+ep: 52600, running mean: -0.537616
+ep: 52700, running mean: -0.567994
+ep: 52800, running mean: -0.568692
+ep: 52900, running mean: -0.476557
+ep: 53000, running mean: -0.606760
+ep: 53100, running mean: -0.524681
+ep: 53200, running mean: -0.562829
+ep: 53300, running mean: -0.597634
+ep: 53400, running mean: -0.568412
+ep: 53500, running mean: -0.543109
+ep: 53600, running mean: -0.440587
+ep: 53700, running mean: -0.380440
+ep: 53800, running mean: -0.486885
+ep: 53900, running mean: -0.534935
+ep: 54000, running mean: -0.515861
+ep: 54100, running mean: -0.531564
+ep: 54200, running mean: -0.481532
+ep: 54300, running mean: -0.517030
+ep: 54400, running mean: -0.528303
+ep: 54500, running mean: -0.439552
+ep: 54600, running mean: -0.302828
+ep: 54700, running mean: -0.490075
+ep: 54800, running mean: -0.507513
+ep: 54900, running mean: -0.484473
+ep: 55000, running mean: -0.581321
+ep: 55100, running mean: -0.557060
+ep: 55200, running mean: -0.592304
+ep: 55300, running mean: -0.571598
+ep: 55400, running mean: -0.556222
+ep: 55500, running mean: -0.505311
+ep: 55600, running mean: -0.485324
+ep: 55700, running mean: -0.505035
+ep: 55800, running mean: -0.593515
+ep: 55900, running mean: -0.621774
+ep: 56000, running mean: -0.522575
+ep: 56100, running mean: -0.579863
+ep: 56200, running mean: -0.467320
+ep: 56300, running mean: -0.489837
+ep: 56400, running mean: -0.493052
+ep: 56500, running mean: -0.497546
+ep: 56600, running mean: -0.374638
+ep: 56700, running mean: -0.436735
+ep: 56800, running mean: -0.442248
+ep: 56900, running mean: -0.526994
+ep: 57000, running mean: -0.487078
+ep: 57100, running mean: -0.499963
+ep: 57200, running mean: -0.517058
+ep: 57300, running mean: -0.486038
+ep: 57400, running mean: -0.415101
+ep: 57500, running mean: -0.464466
+ep: 57600, running mean: -0.420081
+ep: 57700, running mean: -0.440662
+ep: 57800, running mean: -0.475494
+ep: 57900, running mean: -0.558540
+ep: 58000, running mean: -0.619550
+ep: 58100, running mean: -0.412155
+ep: 58200, running mean: -0.478442
+ep: 58300, running mean: -0.500928
+ep: 58400, running mean: -0.466405
+ep: 58500, running mean: -0.475177
+ep: 58600, running mean: -0.540812
+ep: 58700, running mean: -0.540562
+ep: 58800, running mean: -0.396003
+ep: 58900, running mean: -0.519128
+ep: 59000, running mean: -0.593641
+ep: 59100, running mean: -0.629224
+ep: 59200, running mean: -0.598798
+ep: 59300, running mean: -0.519989
+ep: 59400, running mean: -0.549127
+ep: 59500, running mean: -0.503957
+ep: 59600, running mean: -0.402688
+ep: 59700, running mean: -0.498100
+ep: 59800, running mean: -0.508232
+ep: 59900, running mean: -0.524443
+ep: 60000, running mean: -0.579899
+ep: 60100, running mean: -0.561518
+ep: 60200, running mean: -0.557471
+ep: 60300, running mean: -0.568615
+ep: 60400, running mean: -0.587408
+ep: 60500, running mean: -0.612509
+ep: 60600, running mean: -0.680942
+ep: 60700, running mean: -0.599642
+ep: 60800, running mean: -0.619277
+ep: 60900, running mean: -0.546247
+ep: 61000, running mean: -0.557207
+ep: 61100, running mean: -0.558868
+ep: 61200, running mean: -0.607505
+ep: 61300, running mean: -0.550547
+ep: 61400, running mean: -0.645051
+ep: 61500, running mean: -0.686655
+ep: 61600, running mean: -0.595895
+ep: 61700, running mean: -0.725366
+ep: 61800, running mean: -0.702208
+ep: 61900, running mean: -0.600233
+ep: 62000, running mean: -0.554923
+ep: 62100, running mean: -0.642344
+ep: 62200, running mean: -0.600334
+ep: 62300, running mean: -0.644210
+ep: 62400, running mean: -0.653348
+ep: 62500, running mean: -0.679145
+ep: 62600, running mean: -0.602873
+ep: 62700, running mean: -0.634038
+ep: 62800, running mean: -0.691299
+ep: 62900, running mean: -0.665601
+ep: 63000, running mean: -0.612387
+ep: 63100, running mean: -0.637573
+ep: 63200, running mean: -0.588321
+ep: 63300, running mean: -0.655986
+ep: 63400, running mean: -0.681253
+ep: 63500, running mean: -0.609117
+ep: 63600, running mean: -0.652450
+ep: 63700, running mean: -0.497288
+ep: 63800, running mean: -0.682411
+ep: 63900, running mean: -0.691529
+ep: 64000, running mean: -0.671456
+ep: 64100, running mean: -0.635540
+ep: 64200, running mean: -0.679435
+ep: 64300, running mean: -0.548549
+ep: 64400, running mean: -0.645942
+ep: 64500, running mean: -0.625810
+ep: 64600, running mean: -0.557199
+ep: 64700, running mean: -0.600383
+ep: 64800, running mean: -0.672554
+ep: 64900, running mean: -0.697006
+ep: 65000, running mean: -0.700827
+ep: 65100, running mean: -0.666549
+ep: 65200, running mean: -0.682158
+ep: 65300, running mean: -0.648503
+ep: 65400, running mean: -0.697462
+ep: 65500, running mean: -0.701687
+ep: 65600, running mean: -0.619822
+ep: 65700, running mean: -0.646536
+ep: 65800, running mean: -0.704067
+ep: 65900, running mean: -0.758688
+ep: 66000, running mean: -0.679427
+ep: 66100, running mean: -0.602276
+ep: 66200, running mean: -0.543782
+ep: 66300, running mean: -0.611250
+ep: 66400, running mean: -0.654475
+ep: 66500, running mean: -0.625673
+ep: 66600, running mean: -0.758486
+ep: 66700, running mean: -0.829195
+ep: 66800, running mean: -0.658615
+ep: 66900, running mean: -0.767157
+ep: 67000, running mean: -0.734343
+ep: 67100, running mean: -0.731481
+ep: 67200, running mean: -0.706771
+ep: 67300, running mean: -0.711640
+ep: 67400, running mean: -0.786411
+ep: 67500, running mean: -0.737581
+ep: 67600, running mean: -0.702206
