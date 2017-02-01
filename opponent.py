@@ -5,9 +5,9 @@
 import ai.Board as b
 import ai.Eval_funcs as ef
 import numpy as np
-from gomoku import GomokuEnv as env
+from gomoku import GomokuEnv as Env
 
-def make_opponent_policy(board_size, tlimit):
+def get_ai_policy(board_size, tlimit):
     def opponent_policy(curr_state, prev_state, prev_action):
         # check if a new games is started.
         prev_steps = np.count_nonzero(curr_state[2, :, :])
@@ -19,7 +19,7 @@ def make_opponent_policy(board_size, tlimit):
             move = ef.firstmove(board)
             opponent_policy.second_move = False
         else:
-            coords = env.action_to_coordinate(curr_state, prev_action)
+            coords = Env.action_to_coordinate(curr_state, prev_action)
             #print 'player action: '  + str(coords[0] + 1) + ',' + str(coords[1] + 1)
             board = board.move(coords)
             if opponent_policy.second_move:
@@ -30,6 +30,7 @@ def make_opponent_policy(board_size, tlimit):
         #print 'opponent action:' + str(move[0] + 1) + ',' + str(move[1] + 1)
         opponent_policy.board = board.move(move)
 
-        return env.coordinate_to_action(curr_state, move)
+        return Env.coordinate_to_action(curr_state, move)
 
     return opponent_policy
+

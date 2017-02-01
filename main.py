@@ -1,9 +1,8 @@
-from agent import Agent
 from agent import cls
 from gomoku import GomokuEnv
 
-agent = Agent()
-
+import agent_pg
+agent = agent_pg.PGAgent()
 
 def run():
     cls()
@@ -22,8 +21,7 @@ def run():
             print "Please enter a valid choice."
 
     if mode == 1:
-        #agent.learn(render=True)
-        agent.learn_with_torch_pg()
+        agent.learn(render=False)
     elif mode == 2:
         agent.play(GomokuEnv.BLACK)
         raw_input("Press Enter to continue...")
