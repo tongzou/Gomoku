@@ -6,6 +6,7 @@ import random
 from datetime import datetime
 import os
 import torch.optim as optim
+import torch_rl.environments
 import torch_rl.learners as learners
 from torch_rl.tools import rl_evaluate_policy, rl_evaluate_policy_multiple_times
 from torch_rl.policies import DiscreteModelPolicy
