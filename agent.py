@@ -5,6 +5,12 @@ from gomoku import GomokuEnv
 import random
 from datetime import datetime
 import os
+import torch.optim as optim
+import torch_rl.learners as learners
+from torch_rl.tools import rl_evaluate_policy, rl_evaluate_policy_multiple_times
+from torch_rl.policies import DiscreteModelPolicy
+import opponent
+from torch_model import PGModel
 
 gym.envs.registration.register(
     id='Gomoku9x9-v0',
@@ -40,6 +46,11 @@ def cls():
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    out = e_x / e_x.sum()
+    return out
+
 
 def prepro(I, color=GomokuEnv.BLACK):
     """ prepro N x N x 3 uint8 Gomoku board into N x N 1D float vector """
@@ -67,7 +78,7 @@ def policy_forward(model, x):
     h = np.dot(model['W1'], x)
     h[h < 0] = 0  # ReLU nonlinearity
     logp = np.dot(model['W2'], h)
-    p = sigmoid(logp)
+    p = softmax(logp)
     return p, h
 
 
@@ -274,6 +285,31 @@ class Agent:
 
             if reward != 0:  # Gomoku has either +1 or -1 reward exactly when game ends.
                 print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
+
+    def learn_with_torch_pg(self, learning_rate=0.01, stdv=0.01):
+        self.log("start learning - " + str(datetime.now()))
+
+        env = self.create_env()
+        env.opponent_policy = self.get_opponent_policy(None, GomokuEnv.WHITE)
+
+        #Creation of the policy
+        A = env.action_space.n
+        print("Number of Actions is: %d" % A)
+        model = PGModel(self.D, self.D * 2, A, stdv)
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+        #policy=DiscreteModelPolicy(env.action_space,model)
+        learning_algorithm = learners.LearnerPolicyGradient(action_space=env.action_space, average_reward_window=10,
+                                                            torch_model=model, optimizer=optimizer)
+        learning_algorithm.reset()
+        while True:
+            learning_algorithm.step(env=env, discount_factor=0.9, maximum_episode_length=100)
+
+            policy = learning_algorithm.get_policy(stochastic=True)
+            r = rl_evaluate_policy_multiple_times(env, policy, 100, 1.0, 10)
+            print("Evaluation avg reward = %f " % r)
+
+            print("Reward = %f" % learning_algorithm.log.get_last_dynamic_value("total_reward"))
 
     def trained_play(self, env):
         observation = env.reset()
