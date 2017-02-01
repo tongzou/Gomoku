@@ -12,6 +12,7 @@ from torch_rl.tools import rl_evaluate_policy, rl_evaluate_policy_multiple_times
 from torch_rl.policies import DiscreteModelPolicy
 import opponent
 from torch_model import PGModel
+import torch
 
 gym.envs.registration.register(
     id='Gomoku9x9-v0',
@@ -21,7 +22,7 @@ gym.envs.registration.register(
         #'opponent': opponent.make_opponent_policy(9, 0.001),
         'opponent': 'random',
         'observation_type': 'numpy3c',
-        'illegal_move_mode': 'raise',
+        'illegal_move_mode': 'lose',
         'board_size': 9,
     }
 )
@@ -65,8 +66,7 @@ def prepro(I, color=GomokuEnv.BLACK):
 
 def mapping_function(I):
     I = np.subtract(I[0, :, :], I[1, :, :])
-    r = torch.Tensor(I.astype(float).ravel())
-    return r
+    return torch.Tensor(I.astype(float).ravel())
 
 
 def discount_rewards(r, gamma):
@@ -294,7 +294,7 @@ class Agent:
                 print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
 
     def learn_with_torch_pg(self, learning_rate=0.01, stdv=0.01):
-        self.log("start learning - " + str(datetime.now()))
+        self.log("start learning with torch policy gradient - " + str(datetime.now()))
 
         env = self.create_env()
         env.opponent_policy = self.get_opponent_policy(None, GomokuEnv.WHITE)
@@ -304,7 +304,7 @@ class Agent:
         #Creation of the policy
         A = env.action_space.n
         print("Number of Actions is: %d" % A)
-        model = PGModel(self.D, 200, A, stdv)
+        model = PGModel(81, 200, A, stdv)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
         #policy=DiscreteModelPolicy(env.action_space,model)
@@ -315,7 +315,7 @@ class Agent:
             learning_algorithm.step(env=mapped_env, discount_factor=0.9, maximum_episode_length=100)
 
             policy = learning_algorithm.get_policy(stochastic=True)
-            r = rl_evaluate_policy_multiple_times(env, policy, 100, 1.0, 10)
+            r = rl_evaluate_policy_multiple_times(mapped_env, policy, 100, 1.0, 10)
             print("Evaluation avg reward = %f " % r)
 
             print("Reward = %f" % learning_algorithm.log.get_last_dynamic_value("total_reward"))
