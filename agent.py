@@ -62,6 +62,12 @@ def prepro(I, color=GomokuEnv.BLACK):
     return I.astype(np.float).ravel()
 
 
+def mapping_function(I):
+    I = np.subtract(I[0, :, :], I[1, :, :])
+    r = torch.Tensor(I.astype(float).ravel())
+    return r
+
+
 def discount_rewards(r, gamma):
     """ take 1D float array of rewards and compute discounted reward """
     discounted_r = np.zeros_like(r)
@@ -292,10 +298,12 @@ class Agent:
         env = self.create_env()
         env.opponent_policy = self.get_opponent_policy(None, GomokuEnv.WHITE)
 
+        mapped_env = torch_rl.environments.MappedEnv(env, mapping_function)
+
         #Creation of the policy
         A = env.action_space.n
         print("Number of Actions is: %d" % A)
-        model = PGModel(self.D, self.D * 2, A, stdv)
+        model = PGModel(self.D, 200, A, stdv)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
         #policy=DiscreteModelPolicy(env.action_space,model)
@@ -303,7 +311,7 @@ class Agent:
                                                             torch_model=model, optimizer=optimizer)
         learning_algorithm.reset()
         while True:
-            learning_algorithm.step(env=env, discount_factor=0.9, maximum_episode_length=100)
+            learning_algorithm.step(env=mapped_env, discount_factor=0.9, maximum_episode_length=100)
 
             policy = learning_algorithm.get_policy(stochastic=True)
             r = rl_evaluate_policy_multiple_times(env, policy, 100, 1.0, 10)
