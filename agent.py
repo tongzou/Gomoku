@@ -1,6 +1,8 @@
 import gym
 from gomoku import GomokuEnv
+import opponent
 import os
+import time
 
 gym.envs.registration.register(
     id='Gomoku9x9-v0',
@@ -55,58 +57,67 @@ class Agent:
         env.player_color = color
         return env
 
-    def set_opponent_policy(self, env, model, color):
-        # default set the random policy
-        env.opponent = "random"
-        env._seed()
+    def get_policy(self, model, color):
+        return "random"
+
+    def set_opponent_policy(self, env, policy):
+        if policy is None:
+            policy = "random"
+
+        if isinstance(policy, str):
+            if policy == 'ai':
+                env.opponent_policy = opponent.get_ai_policy(self.N, 0.001)
+            elif policy == 'naive':
+                env.opponent_policy = opponent.get_naive_policy(self.N)
+            else:
+                # default set the random policy
+                env.opponent = "random"
+                env._seed()
+        else:
+            env.opponent_policy = policy
+
+    def choose_move(self, observation, model, color):
+        return self.D  # default return resign move
 
     def learn(self):
         pass
 
-    '''
-    def trained_play(self, env):
-        observation = env.reset()
-        count = 0
-        while True:
-            # preprocess the observation
-            x = prepro(observation)
+    def play(self, color, opponent='human'):
+        if self.model is None:
+            raise BaseException("This agent is not learned.")
 
-            # forward the policy network and sample an action from the returned probability
-            aprob, h = policy_forward(x)
-            mask = np.zeros(self.D, dtype=int)
-            mask[GomokuEnv.get_possible_actions(observation)] = 1
-            aprob = np.multiply(aprob, mask)
-            action = np.random.choice(np.where(aprob==aprob.max())[0])
-            observation, reward, done, info = env.step(action)
-            print 'reward: ' + str(reward) + ';done:' + str(done)
-            env.render()
-            if done:
-                if reward == -1:
-                    observation = env.reset()
-                    count += 1
-                else:
-                    print count
-                    exit()
-    '''
+        if opponent == 'human':
+            env = self.create_env(1 - color)
+            self.set_opponent_policy(env, self.get_policy(self.model, color))
+        else:
+            env = self.create_env(color)
+            self.set_opponent_policy(env, opponent)
 
-    def play(self, color):
-        env = self.create_env(1 - color)
-        self.set_opponent_policy(env, self.model, color)
         observation = env.reset()
-        env.render()
 
         while True:
             cls()
             env.render()
-            action = input('Please enter your move in the form (x, y):')
-            action = [action[0] - 1, action[1] - 1]
-            action = GomokuEnv.coordinate_to_action(observation, action)
+            if opponent == 'human':
+                action = input('Please enter your move in the form (x, y):')
+                action = [action[0] - 1, action[1] - 1]
+                action = GomokuEnv.coordinate_to_action(observation, action)
+            else:
+                time.sleep(1)
+                action = self.choose_move(observation, self.model, color)
+
             observation, reward, done, info = env.step(action)
             if done:
                 cls()
                 env.render()
                 if reward == 1:
-                    print "You Win!"
+                    if opponent == 'human':
+                        print 'You Win!'
+                    else:
+                        print 'Agent Win!'
                 else:
-                    print "You Lost!"
+                    if opponent == 'human':
+                        print 'You Lost!'
+                    else:
+                        print 'Agent Lost!'
                 return

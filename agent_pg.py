@@ -29,11 +29,11 @@ def prepro(I, color=GomokuEnv.BLACK):
 
 def discount_rewards(r, gamma):
     """ take 1D float array of rewards and compute discounted reward """
-    discounted_r = np.zeros_like(r)
+    discounted_r = np.zeros(r.shape, dtype=float)
     running_add = 0
     for t in reversed(xrange(0, r.size)):
         if r[t] != 0:
-            running_add = 0  # reset the sum, since this was a game boundary (pong specific!)
+            running_add = 0  # reset the sum, since this was a game boundary
         running_add = running_add * gamma + r[t]
         discounted_r[t] = running_add
     return discounted_r
@@ -43,8 +43,7 @@ def policy_forward(model, x):
     h = np.dot(model['W1'], x)
     h[h < 0] = 0  # ReLU nonlinearity
     logp = np.dot(model['W2'], h)
-    p = softmax(logp)
-    return p, h
+    return softmax(logp), h
 
 
 def policy_backward(model, epx, eph, epdlogp):
@@ -73,41 +72,43 @@ class PGAgent(Agent):
                 self.log('no saved model.')
                 self.model = None
 
+        if self.model is None:
+            self.model = self.get_random_model()
+
     def get_model_file_name(self):
-        return 'pg_%s.p' % (self.N)
+        return 'pg_%s_%s.p' % (self.N, self.H)
 
     def get_opponent_model_file_name(self):
-        return 'pg_opponent%s' % (self.N)
+        return 'pg_opponent%s_%s.p' % (self.N, self.H)
 
     # return a random model
     def get_random_model(self):
         return {'W1': np.random.randn(self.H, self.D) / np.sqrt(self.D),
                 'W2': np.random.randn(self.D + 1, self.H) / np.sqrt(self.H)}
 
-
-    def set_opponent_policy(self, env, model, color):
+    def get_policy(self, model, color):
         if model is None:
             # try to load it from file.
             try:
                 model = pickle.load(open(self.get_opponent_model_file_name(), 'rb'))
-                self.log('using saved opponent model:\n' + str(model))
             except:
                 model = self.get_random_model()
-                self.log('using random opponent model:\n' + str(model))
         else:
-            self.log('using current opponent model:\n' + str(model))
             model = model.copy()
 
         def opponent_policy(curr_state, prev_state, prev_action):
-            action, _, _, _ = self.choose_move(curr_state, model, color)
-            return action
+            return self.choose_move(curr_state, model, color)
 
-        env.opponent = env.opponent_policy = opponent_policy
+        return opponent_policy
+
+    def choose_move(self, observation, model, color):
+        action, _, _, _ = self._choose_move(observation, model, color)
+        return action
 
     '''
         Choose a move based on the current board, trained model and player color
     '''
-    def choose_move(self, observation, model, color):
+    def _choose_move(self, observation, model, color):
         # preprocess the observation
         x = prepro(observation, color)
 
@@ -117,17 +118,19 @@ class PGAgent(Agent):
         if len(possible_moves) == 0:
             return self.D, x, aprob, h  # resign
 
-        mask = np.zeros(self.D + 1, dtype=int)
-        mask[possible_moves] = 1
-        newprob = np.multiply(aprob, mask)
-        max = newprob.max()
-        if max == 0:
-            self.log('all probabilies are zero!!!!')
+        newprob = np.array([aprob[k] for k in possible_moves])
+        #mask = np.zeros(self.D + 1, dtype=int)
+        #mask[possible_moves] = 1
+        #newprob = np.multiply(aprob, mask)
+
+        if newprob.max() == 0:
+            # self.log('all probabilies are zero!!!!')
             action = random.choice(possible_moves)
         else:
-            action = np.random.choice(np.where(newprob == max)[0])
-        #aprob = np.multiply(aprob, mask)
-        #action = np.random.choice(np.where(aprob == aprob.max())[0])
+            newprob = softmax(newprob)
+            action = np.random.choice(possible_moves, 1, p=newprob)[0]
+            #action = np.random.choice(np.where(newprob == newprob.max())[0])
+
         return action, x, aprob, h
 
     '''
@@ -135,8 +138,10 @@ class PGAgent(Agent):
         learning_rate: 1e-4
         gamma:  # discount factor for reward
         decay_rate:  # decay factor for RMSProp leaky sum of grad^2
+        opponent: if None, will use self play. If not none, will use that as the opponent.
     '''
-    def learn(self, render=False, model_threshold=0.8, min_episodes=100, batch_size=10, learning_rate=1e-4, gamma=0.99, decay_rate=0.99):
+    def learn(self, render=False, model_threshold=0.9, min_episodes=100, batch_size=10,
+              learning_rate=1e-3, gamma=0.99, decay_rate=0.99, opponent=None):
         # setup logging
         self.log("start learning - " + str(datetime.now()))
 
@@ -147,11 +152,12 @@ class PGAgent(Agent):
         reward_sum = 0
         episode_number = 0
 
-        if self.model is None:
-            self.model = self.get_random_model()
-
         # initialize component for self play.
-        self.set_opponent_policy(env, None, GomokuEnv.WHITE)
+        if opponent is None:
+            self.set_opponent_policy(env, self.get_policy(None, GomokuEnv.WHITE))
+        else:
+            self.set_opponent_policy(env, opponent)
+
         opponent_episode_number = 0
 
         grad_buffer = {k: np.zeros_like(v) for k, v in self.model.iteritems()}  # update buffers that add up gradients over a batch
@@ -161,7 +167,7 @@ class PGAgent(Agent):
             if render:
                 env.render()
 
-            action, x, aprob, h = self.choose_move(observation, self.model, GomokuEnv.BLACK)
+            action, x, aprob, h = self._choose_move(observation, self.model, GomokuEnv.BLACK)
 
             # record various intermediates (needed later for backprop)
             xs.append(x)  # observation
@@ -215,12 +221,12 @@ class PGAgent(Agent):
                 print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
 
                 # replace the opponent model once our running_reward is over the threshold and min_episodes is met
-                if running_reward > model_threshold and opponent_episode_number > min_episodes:
+                if opponent is None and running_reward > model_threshold and opponent_episode_number > min_episodes:
                     self.log('replace opponent model now: ep ' + str(episode_number) + '\n' +
                               'running mean: ' + str(running_reward))
                     # save the opponent model
                     pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
-                    self.set_opponent_policy(env, self.model, GomokuEnv.WHITE)
+                    self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
                     opponent_episode_number = 0
                     running_reward = 0
 
@@ -228,7 +234,7 @@ class PGAgent(Agent):
                     message = 'ep: %d, running mean: %f' % (episode_number, running_reward)
                     self.log(message)
                     print message
-                    pickle.dump(self.model, open('save' + str(self.N) + '.p', 'wb'))
+                    pickle.dump(self.model, open(self.get_model_file_name(), 'wb'))
 
                 reward_sum = 0
                 observation = env.reset()  # reset env

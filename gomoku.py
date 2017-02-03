@@ -138,6 +138,13 @@ class GomokuEnv(gym.Env):
         if a is not None:
             if GomokuEnv.resign_move(self.board_size, a):
                 return self.state, 1, True, {'state': self.state}
+            elif not GomokuEnv.valid_move(self.state, a):
+                if self.illegal_move_mode == 'lose':
+                    # Automatic loss on illegal move
+                    self.done = True
+                    return self.state, 1., True, {'state': self.state}
+                else:
+                    raise error.Error('Unsupported illegal move action: {}'.format(self.illegal_move_mode))
             else:
                 GomokuEnv.make_move(self.state, a, 1 - self.player_color)
 
@@ -232,48 +239,60 @@ class GomokuEnv(gym.Env):
         free_x, free_y = np.where(board[2, :, :] == 1)
         return [GomokuEnv.coordinate_to_action(board, [x, y]) for x, y in zip(free_x, free_y)]
 
+    '''
+        pattern is a regular expression to test for and size is the length of the pattern
+    '''
     @staticmethod
-    def test_horizontal(player_board):
+    def search_board(player_board, pattern, size):
+        search = GomokuEnv.search_horizontal(player_board, pattern)
+        if search is not None:
+            return search, [1, 0]
+
+        search = GomokuEnv.search_horizontal(np.transpose(player_board), pattern)
+        if search is not None:
+            return [search[1], search[0]], [0, 1]
+
+        return GomokuEnv.search_diagonal(player_board, pattern, size)
+
+    @staticmethod
+    def search_horizontal(player_board, pattern):
         d = player_board.shape[0]
         state = ''
         for i in range(d):
             state += ''.join(map(str, player_board[i])) + '-'
 
-        return re.search('1{5}', state)
+        index = re.search(pattern, state)
+        if index is not None:
+            index = index.start()
+            index -= index / (d + 1)
+            index = GomokuEnv.action_to_coordinate(player_board, index)
+        return index
+
+    @staticmethod
+    def search_diagonal(player_board, pattern, size):
+        d = player_board.shape[0]
+        for i in range(d-size+1):
+            forward = np.zeros((d, d), dtype=int)
+            backward = np.zeros((d, d), dtype=int)
+            for j in range(i, i + size):
+                forward[j] = shift(player_board[j, :], j - i)
+                backward[j] = shift(player_board[j, :], i - j)
+            index = GomokuEnv.search_horizontal(np.transpose(forward), pattern)
+            if index is not None:
+                return [index[1], index[0]], [-1, 1]
+            index = GomokuEnv.search_horizontal(np.transpose(backward), pattern)
+            if index is not None:
+                return [index[1], index[0]], [1, 1]
+
+        return None
 
     @staticmethod
     def game_finished(board, first_color):
         # Returns 1 if first_color wins, -1 if first_color loses and 0 otherwise
-        d = board.shape[1]
-
-        # test horizontal and vertical
-        player_board = board[first_color, :, :]
-        if GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board)):
+        if GomokuEnv.search_board(board[first_color, :, :], '1{5}', 5) is not None:
             return 1
 
-        # test diagonal
-        for i in range(d-4):
-            forward = np.zeros((d, d), dtype=int)
-            backward = np.zeros((d, d), dtype=int)
-            for j in range(i, i + 5):
-                forward[j] = shift(player_board[j, :], j - i)
-                backward[j] = shift(player_board[j, :], i - j)
-            if GomokuEnv.test_horizontal(np.transpose(forward)) or GomokuEnv.test_horizontal(np.transpose(backward)):
-                return 1
-
-        # test player 2 horizontal and vertical
-        player_board = board[1 - first_color, :, :]
-        if GomokuEnv.test_horizontal(player_board) or GomokuEnv.test_horizontal(np.transpose(player_board)):
+        if GomokuEnv.search_board(board[1 - first_color, :, :], '1{5}', 5) is not None:
             return -1
-
-        # test diagonal
-        for i in range(d-4):
-            forward = np.zeros((d, d), dtype=int)
-            backward = np.zeros((d, d), dtype=int)
-            for j in range(i, i + 5):
-                forward[j] = shift(player_board[j, :], j - i)
-                backward[j] = shift(player_board[j, :], i - j)
-            if GomokuEnv.test_horizontal(np.transpose(forward)) or GomokuEnv.test_horizontal(np.transpose(backward)):
-                return -1
 
         return 0
