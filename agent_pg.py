@@ -235,7 +235,7 @@ class PGAgent(Agent):
                             # save the opponent model
                             pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
                             self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
-                            running_reward = 0
+                            running_reward = None
 
                     reward_sum = 0
 

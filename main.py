@@ -26,7 +26,7 @@ def run():
             print "Please enter a valid choice."
 
     if mode == 1:
-        agent.learn(render=False)
+        agent.learn(render=False, opponent='random')
     elif mode == 2:
         agent.play(GomokuEnv.BLACK)
         raw_input("Press Enter to continue...")

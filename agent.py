@@ -1,4 +1,5 @@
 import gym
+from gym import error
 from gomoku import GomokuEnv
 import opponent
 import os
@@ -69,10 +70,11 @@ class Agent:
                 env.opponent_policy = opponent.get_ai_policy(self.N, 0.001)
             elif policy == 'naive':
                 env.opponent_policy = opponent.get_naive_policy(self.N)
-            else:
-                # default set the random policy
+            elif policy == 'random':
                 env.opponent = "random"
                 env._seed()
+            else:
+                raise error.Error('Unrecognized opponent policy {}'.format(policy))
         else:
             env.opponent_policy = policy
 
