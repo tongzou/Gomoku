@@ -141,8 +141,8 @@ class PGAgent(Agent):
         decay_rate:  # decay factor for RMSProp leaky sum of grad^2
         opponent: if None, will use self play. If not none, will use that as the opponent.
     '''
-    def learn(self, render=False, model_threshold=0.9, min_episodes=100, batch_size=10, update_per_batch=5,
-              learning_rate=1e-3, gamma=0.99, decay_rate=0.99, opponent=None):
+    def learn(self, render=False, model_threshold=0.5, batch_size=10, update_per_batch=10,
+              learning_rate=1e-4, gamma=0.99, decay_rate=0.99, opponent=None):
         # setup logging
         self.log("start learning - " + str(datetime.now()))
 
@@ -159,8 +159,6 @@ class PGAgent(Agent):
         else:
             self.set_opponent_policy(env, opponent)
 
-        opponent_episode_number = 0
-
         grad_buffer = {k: np.zeros_like(v) for k, v in self.model.iteritems()}  # update buffers that add up gradients over a batch
         rmsprop_cache = {k: np.zeros_like(v) for k, v in self.model.iteritems()}  # rmsprop memory
 
@@ -176,7 +174,7 @@ class PGAgent(Agent):
 
             y = np.zeros(aprob.size)
             y[action] = 1
-            dlogps.append(np.subtract(y, aprob))  # grad that encourages the action that was taken to be taken (see http://cs231n.github.io/neural-networks-2/#losses if confused)
+            dlogps.append(np.subtract(y, aprob))  # grad that encourages the action that was taken to be taken
 
             # step the environment and get new measurements
             observation, reward, done, info = env.step(action)
@@ -188,7 +186,6 @@ class PGAgent(Agent):
                 if render:
                     env.render()
                 episode_number += 1
-                opponent_episode_number += 1
 
                 print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !')
 
@@ -226,21 +223,19 @@ class PGAgent(Agent):
                     running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
                     print 'episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
 
-                    # replace the opponent model once our running_reward is over the threshold and min_episodes is met
-                    '''
-                    if opponent is None and running_reward > model_threshold and opponent_episode_number > min_episodes:
-                        self.log('replace opponent model now: ep ' + str(episode_number) + '\n' +
-                                  'running mean: ' + str(running_reward))
-                        # save the opponent model
-                        pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
-                        self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
-                        opponent_episode_number = 0
-                        running_reward = 0
-                    '''
                     if episode_number % 100 == 0:
                         message = 'ep: %d, running mean: %f' % (episode_number, running_reward)
                         self.log(message)
                         pickle.dump(self.model, open(self.get_model_file_name(), 'wb'))
+
+                        # replace the opponent model once our running_reward is over the threshold * batch_size
+                        if opponent is None and running_reward > model_threshold * batch_size:
+                            self.log('replace opponent model now: ep ' + str(episode_number) + '\n' +
+                                     'running mean: ' + str(running_reward))
+                            # save the opponent model
+                            pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
+                            self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
+                            running_reward = 0
 
                     reward_sum = 0
 

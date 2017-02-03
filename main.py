@@ -2,7 +2,7 @@ from agent import cls
 from gomoku import GomokuEnv
 
 from agent_pg import PGAgent
-agent = PGAgent(hidden=500)
+agent = PGAgent(hidden=200)
 
 #from agent_torch import TorchAgent
 #agent = TorchAgent()
