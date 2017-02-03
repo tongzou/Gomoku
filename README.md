@@ -4,7 +4,7 @@
 
 ### Install
 
-This project requires **Python 2.7** and **openAI Gym** library installed
+This project requires **openAI Gym** library installed
 
 ### Code
 

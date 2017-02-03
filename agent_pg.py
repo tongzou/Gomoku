@@ -134,13 +134,14 @@ class PGAgent(Agent):
         return action, x, aprob, h
 
     '''
-        batch_size:  # every how many episodes to do a param update?
+        batch_size:  # every how many episodes to do a gradient calculation?
+        update_per_batch:  # every how many batches to do a param update?
         learning_rate: 1e-4
         gamma:  # discount factor for reward
         decay_rate:  # decay factor for RMSProp leaky sum of grad^2
         opponent: if None, will use self play. If not none, will use that as the opponent.
     '''
-    def learn(self, render=False, model_threshold=0.9, min_episodes=100, batch_size=10,
+    def learn(self, render=False, model_threshold=0.9, min_episodes=100, batch_size=10, update_per_batch=5,
               learning_rate=1e-3, gamma=0.99, decay_rate=0.99, opponent=None):
         # setup logging
         self.log("start learning - " + str(datetime.now()))
@@ -189,55 +190,58 @@ class PGAgent(Agent):
                 episode_number += 1
                 opponent_episode_number += 1
 
-                # stack together all inputs, hidden states, action gradients, and rewards for this episode
-                epx = np.vstack(xs)
-                eph = np.vstack(hs)
-                epdlogp = np.vstack(dlogps)
-                epr = np.vstack(drs)
+                print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !')
 
-                xs, hs, dlogps, drs = [], [], [], []  # reset array memory
-
-                # compute the discounted reward backwards through time
-                discounted_epr = discount_rewards(epr, gamma)
-
-                # standardize the rewards to be unit normal
-                discounted_epr = np.subtract(discounted_epr, np.mean(discounted_epr))
-                discounted_epr = np.divide(discounted_epr, np.std(discounted_epr))
-
-                epdlogp = np.multiply(epdlogp, discounted_epr)  # modulate the gradient with advantage (PG magic happens right here.)
-                grad = policy_backward(self.model, epx, eph, epdlogp)
-                for k in self.model:
-                    grad_buffer[k] += grad[k]  # accumulate grad over batch
-
-                # perform rmsprop parameter update every batch_size episodes
+                # only do the gradient for every batch_size episodes
                 if episode_number % batch_size == 0:
-                    for k, v in self.model.iteritems():
-                        g = grad_buffer[k] # gradient
-                        rmsprop_cache[k] = decay_rate * rmsprop_cache[k] + (1 - decay_rate) * g**2
-                        self.model[k] += learning_rate * g / (np.sqrt(rmsprop_cache[k]) + 1e-5)
-                        grad_buffer[k] = np.zeros_like(v)  # reset batch gradient buffer
+                    # stack together all inputs, hidden states, action gradients, and rewards for this episode
+                    epx = np.vstack(xs)
+                    eph = np.vstack(hs)
+                    epdlogp = np.vstack(dlogps)
+                    epr = np.vstack(drs)
 
-                running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
-                print 'resetting env. episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
+                    xs, hs, dlogps, drs = [], [], [], []  # reset array memory
 
-                # replace the opponent model once our running_reward is over the threshold and min_episodes is met
-                if opponent is None and running_reward > model_threshold and opponent_episode_number > min_episodes:
-                    self.log('replace opponent model now: ep ' + str(episode_number) + '\n' +
-                              'running mean: ' + str(running_reward))
-                    # save the opponent model
-                    pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
-                    self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
-                    opponent_episode_number = 0
-                    running_reward = 0
+                    # compute the discounted reward backwards through time
+                    discounted_epr = discount_rewards(epr, gamma)
 
-                if episode_number % 100 == 0:
-                    message = 'ep: %d, running mean: %f' % (episode_number, running_reward)
-                    self.log(message)
-                    print message
-                    pickle.dump(self.model, open(self.get_model_file_name(), 'wb'))
+                    # standardize the rewards to be unit normal
+                    discounted_epr = np.subtract(discounted_epr, np.mean(discounted_epr))
+                    discounted_epr = np.divide(discounted_epr, np.std(discounted_epr))
 
-                reward_sum = 0
+                    epdlogp = np.multiply(epdlogp, discounted_epr)  # modulate the gradient with advantage (PG magic happens right here.)
+                    grad = policy_backward(self.model, epx, eph, epdlogp)
+                    for k in self.model:
+                        grad_buffer[k] += grad[k]  # accumulate grad over batch
+
+                    # perform rmsprop parameter update every batch_size episodes
+                    if episode_number % (update_per_batch * batch_size) == 0:
+                        print 'update params'
+                        for k, v in self.model.iteritems():
+                            g = grad_buffer[k]  # gradient
+                            rmsprop_cache[k] = decay_rate * rmsprop_cache[k] + (1 - decay_rate) * g**2
+                            self.model[k] += learning_rate * g / (np.sqrt(rmsprop_cache[k]) + 1e-5)
+                            grad_buffer[k] = np.zeros_like(v)  # reset batch gradient buffer
+
+                    running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
+                    print 'episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
+
+                    # replace the opponent model once our running_reward is over the threshold and min_episodes is met
+                    '''
+                    if opponent is None and running_reward > model_threshold and opponent_episode_number > min_episodes:
+                        self.log('replace opponent model now: ep ' + str(episode_number) + '\n' +
+                                  'running mean: ' + str(running_reward))
+                        # save the opponent model
+                        pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
+                        self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
+                        opponent_episode_number = 0
+                        running_reward = 0
+                    '''
+                    if episode_number % 100 == 0:
+                        message = 'ep: %d, running mean: %f' % (episode_number, running_reward)
+                        self.log(message)
+                        pickle.dump(self.model, open(self.get_model_file_name(), 'wb'))
+
+                    reward_sum = 0
+
                 observation = env.reset()  # reset env
-
-            if reward != 0:  # Gomoku has either +1 or -1 reward exactly when game ends.
-                print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !!!!!!!!')
