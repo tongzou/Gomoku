@@ -2,7 +2,7 @@ from agent import cls
 from gomoku import GomokuEnv
 
 from agent_pg import PGAgent
-agent = PGAgent(hidden=200)
+agent = PGAgent(hidden=500)
 
 #from agent_torch import TorchAgent
 #agent = TorchAgent()
@@ -13,11 +13,11 @@ def run():
     while True:
         try:
             mode = input('What would you like the Gomoku Agent to do?\n' + ' ' * 5 +
-                         '1. Self Train\n' + ' ' * 5 +
+                         '1. Agent Training\n' + ' ' * 5 +
                          '2. Agent Vs Human\n' + ' ' * 5 +
                          '3. Human Vs Agent\n' + ' ' * 5 +
-                         '4. Naive AI Vs Agent\n' + ' ' * 5 +
-                         '5. Agent Vs Naive AI\n' + ' ' * 5 +
+                         '4. Agent Vs Naive AI\n' + ' ' * 5 +
+                         '5. Naive AI Vs Agent\n' + ' ' * 5 +
                          '6. Exit\n')
             if mode < 1 or mode > 6:
                 raise ValueError()
@@ -26,7 +26,10 @@ def run():
             print "Please enter a valid choice."
 
     if mode == 1:
-        agent.learn(render=False, opponent='random')
+        # play with a naive opponent
+        agent.train(render=False, opponent='naive3', model_threshold=0.4, valid_only=True)
+        # self-play training
+        #agent.train(render=False, model_threshold=0.4, valid_only=True)
     elif mode == 2:
         agent.play(GomokuEnv.BLACK)
         raw_input("Press Enter to continue...")
@@ -34,10 +37,10 @@ def run():
         agent.play(GomokuEnv.WHITE)
         raw_input("Press Enter to continue...")
     elif mode == 4:
-        agent.play(GomokuEnv.WHITE, 'naive')
+        agent.test(GomokuEnv.BLACK, 'naive3', render=False, size=1000)
         raw_input("Press Enter to continue...")
     elif mode == 5:
-        agent.play(GomokuEnv.BLACK, 'naive')
+        agent.test(GomokuEnv.WHITE, 'naive3', render=False, size=1000)
         raw_input("Press Enter to continue...")
     else:
         exit()

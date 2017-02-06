@@ -45,7 +45,7 @@ class Agent:
 
     def log(self, message):
         if self.logger is None:
-            self.logger = open(self.log_file, 'ab')
+            self.logger = open(os.path.join('logs', self.log_file), 'ab')
         self.logger.write(message + '\n')
         self.logger.flush()
 
@@ -68,8 +68,12 @@ class Agent:
         if isinstance(policy, str):
             if policy == 'ai':
                 env.opponent_policy = opponent.get_ai_policy(self.N, 0.001)
-            elif policy == 'naive':
-                env.opponent_policy = opponent.get_naive_policy(self.N)
+            elif policy.startswith('naive'):
+                try:
+                    level = int(policy[-1])
+                except:
+                    level = 0
+                env.opponent_policy = opponent.get_naive_policy(self.N, level)
             elif policy == 'random':
                 env.opponent = "random"
                 env._seed()
@@ -81,12 +85,41 @@ class Agent:
     def choose_move(self, observation, model, color):
         return self.D  # default return resign move
 
-    def learn(self):
+    def train(self):
         pass
+
+    def test(self, color=GomokuEnv.BLACK, opponent="naive", render=False, size=100):
+        if self.model is None:
+            raise BaseException("This agent is not trained.")
+
+        env = self.create_env(color)
+        self.set_opponent_policy(env, opponent)
+
+        observation = env.reset()
+        win = 0
+        episode_number = 0
+
+        while episode_number < size:
+            if render:
+                env.render()
+
+            action = self.choose_move(observation, self.model, color)
+            observation, reward, done, info = env.step(action)
+            if reward == 1:
+                win += 1
+
+            if done:
+                if render:
+                    env.render()
+                episode_number += 1
+                print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !')
+                observation = env.reset()  # reset env
+
+        print 'Total wins for the agent is %f, the winning ratio for the agent is: %f' % (win, float(win)/float(size))
 
     def play(self, color, opponent='human'):
         if self.model is None:
-            raise BaseException("This agent is not learned.")
+            raise BaseException("This agent is not trained.")
 
         if opponent == 'human':
             env = self.create_env(1 - color)

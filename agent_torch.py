@@ -43,8 +43,8 @@ class TorchAgent(Agent):
     def __init__(self, board_size=9):
         Agent.__init__(self, board_size)
 
-    def learn(self, render=False, learning_rate=0.01, stdv=0.01):
-        self.log("start learning with torch policy gradient - " + str(datetime.now()))
+    def train(self, render=False, learning_rate=0.01, stdv=0.01):
+        self.log("start training with torch policy gradient - " + str(datetime.now()))
 
         env = self.create_env()
 

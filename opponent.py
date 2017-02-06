@@ -35,8 +35,12 @@ def get_ai_policy(board_size, tlimit):
 
 '''
     Implements the naive policy. This will be the evaluation metric for the Agent.
+    level:  0 do not search for connection
+            1 search for connected 3's
+            2 search for connected 2's
+            3 search for 1's (this is the highest level for the agent)
 '''
-def get_naive_policy(board_size):
+def get_naive_policy(board_size, level=3):
     '''
         mode(binary):   0100. return start of the pattern
                         1000. return 1 before the start
@@ -104,6 +108,9 @@ def get_naive_policy(board_size):
         else:
             free_x, free_y = np.where(curr_state[2, :, :] == 1)
             possible_moves = [(x, y) for x, y in zip(free_x, free_y)]
+            if len(possible_moves) == 0:
+                # resign if there is no more moves
+                return curr_state.shape[-1] ** 2
             '''
                 Strategy for the naive agent:
                 1. Search if there is a win opportunity.
@@ -121,15 +128,21 @@ def get_naive_policy(board_size):
             # check if we have 4 connected and empty space to make a win
             move = search_move(my_board, '23{4}', 5, 0b0100)
             if move is None:
+                # check if we have 4 connected and empty space to make a win
                 move = search_move(my_board, '3{4}2', 5, 0b0010)
             if move is None:
+                # check if opponent has 4 connected
                 move = search_move(my_board, '21{4}', 5, 0b0100)
             if move is None:
+                # check if opponent has 4 connected
                 move = search_move(my_board, '1{4}2', 5, 0b0010)
             if move is None:
+                # check if opponent has open 3
                 move = search_move(my_board, '21{3}2', 5, 0b0110)
+
             if move is None:
-                for i in range(3):
+                for i in range(level):
+                    # search for connected 3-i stones
                     move = search_move(my_board, '23{%d}' % (3-i), 4-i, 0b0100)
                     if move is None:
                         move = search_move(my_board, '3{%d}2' % (3-i), 4-i, 0b0010)

@@ -16,3 +16,4 @@ In a terminal or command window, navigate to the top-level project directory `Go
 
 ```python main.py```  
 
+This will show a list of options to choose from. 

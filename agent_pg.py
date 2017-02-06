@@ -2,12 +2,14 @@ import numpy as np
 import cPickle as pickle
 from gomoku import GomokuEnv
 import random
+import os
 from agent import Agent
 from datetime import datetime
 
 
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
+
 
 def softmax(x):
     e_x = np.exp(x - np.max(x))
@@ -17,13 +19,10 @@ def softmax(x):
 
 def prepro(I, color=GomokuEnv.BLACK):
     """ prepro N x N x 3 uint8 Gomoku board into N x N 1D float vector """
-    I = np.subtract(I[0, :, :], I[1, :, :])
-    '''
     if color == GomokuEnv.BLACK:
         I = np.subtract(I[0, :, :], I[1, :, :])
     else:
         I = np.subtract(I[1, :, :], I[0, :, :])
-    '''
     return I.astype(np.float).ravel()
 
 
@@ -76,10 +75,10 @@ class PGAgent(Agent):
             self.model = self.get_random_model()
 
     def get_model_file_name(self):
-        return 'pg_%s_%s.p' % (self.N, self.H)
+        return os.path.join('models', 'pg_%s_%s.p' % (self.N, self.H))
 
     def get_opponent_model_file_name(self):
-        return 'pg_opponent%s_%s.p' % (self.N, self.H)
+        return os.path.join('models', 'pg_opponent%s_%s.p' % (self.N, self.H))
 
     # return a random model
     def get_random_model(self):
@@ -94,7 +93,7 @@ class PGAgent(Agent):
             except:
                 model = self.get_random_model()
         else:
-            model = model.copy()
+            model = {'W1': model['W1'].copy(), 'W2': model['W2'].copy()}
 
         def opponent_policy(curr_state, prev_state, prev_action):
             return self.choose_move(curr_state, model, color)
@@ -107,44 +106,47 @@ class PGAgent(Agent):
 
     '''
         Choose a move based on the current board, trained model and player color
+        valid_only: whether to choose valid moves only.
     '''
-    def _choose_move(self, observation, model, color):
+    def _choose_move(self, observation, model, color, valid_only=True):
         # preprocess the observation
         x = prepro(observation, color)
 
         # forward the policy network and sample an action from the returned probability
         aprob, h = policy_forward(model, x)
-        possible_moves = GomokuEnv.get_possible_actions(observation)
-        if len(possible_moves) == 0:
-            return self.D, x, aprob, h  # resign
 
-        newprob = np.array([aprob[k] for k in possible_moves])
-        #mask = np.zeros(self.D + 1, dtype=int)
-        #mask[possible_moves] = 1
-        #newprob = np.multiply(aprob, mask)
+        if valid_only:
+            possible_moves = GomokuEnv.get_possible_actions(observation)
+            if len(possible_moves) == 0:
+                return self.D, x, aprob, h  # resign
 
-        if newprob.max() == 0:
-            # self.log('all probabilies are zero!!!!')
-            action = random.choice(possible_moves)
+            newprob = np.array([aprob[k] for k in possible_moves])
+            max = newprob.max()
+
+            if max == 0:
+                # self.log('all probabilies are zero!!!!')
+                action = random.choice(possible_moves)
+            else:
+                action = possible_moves[np.random.choice(np.where(newprob == max)[0])]
         else:
-            newprob = softmax(newprob)
-            action = np.random.choice(possible_moves, 1, p=newprob)[0]
-            #action = np.random.choice(np.where(newprob == newprob.max())[0])
+            action = np.random.choice(np.where(aprob == aprob.max())[0])
 
         return action, x, aprob, h
 
     '''
+        model_threshold: when to update the opponent model to the current model
         batch_size:  # every how many episodes to do a gradient calculation?
         update_per_batch:  # every how many batches to do a param update?
         learning_rate: 1e-4
         gamma:  # discount factor for reward
         decay_rate:  # decay factor for RMSProp leaky sum of grad^2
         opponent: if None, will use self play. If not none, will use that as the opponent.
+        valid_only: whether restrict to valid moves only.
     '''
-    def learn(self, render=False, model_threshold=0.5, batch_size=10, update_per_batch=10,
-              learning_rate=1e-4, gamma=0.99, decay_rate=0.99, opponent=None):
+    def train(self, render=False, model_threshold=0.5, batch_size=10, update_per_batch=10,
+              learning_rate=1e-4, gamma=0.99, decay_rate=0.99, opponent=None, valid_only=True):
         # setup logging
-        self.log("start learning - " + str(datetime.now()))
+        self.log("start training - " + str(datetime.now()))
 
         env = self.create_env()
         observation = env.reset()
@@ -166,7 +168,7 @@ class PGAgent(Agent):
             if render:
                 env.render()
 
-            action, x, aprob, h = self._choose_move(observation, self.model, GomokuEnv.BLACK)
+            action, x, aprob, h = self._choose_move(observation, self.model, GomokuEnv.BLACK, valid_only=valid_only)
 
             # record various intermediates (needed later for backprop)
             xs.append(x)  # observation
@@ -228,14 +230,23 @@ class PGAgent(Agent):
                         self.log(message)
                         pickle.dump(self.model, open(self.get_model_file_name(), 'wb'))
 
-                        # replace the opponent model once our running_reward is over the threshold * batch_size
-                        if opponent is None and running_reward > model_threshold * batch_size:
-                            self.log('replace opponent model now: ep ' + str(episode_number) + '\n' +
-                                     'running mean: ' + str(running_reward))
-                            # save the opponent model
-                            pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
-                            self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
-                            running_reward = None
+                        if running_reward > model_threshold * batch_size:
+                            if opponent is None:
+                                # replace the opponent model once our running_reward is over the threshold * batch_size
+                                message = 'replace opponent model now: ep ' + str(episode_number) + '\n' + \
+                                          'running mean: ' + str(running_reward)
+                                self.log(message)
+                                print message
+                                # save the opponent model
+                                pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
+                                self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
+                                running_reward = None
+                            else:
+                                # Yay, we have beaten the opponent
+                                message = 'opponent is beaten: %s' % running_reward
+                                self.log(message)
+                                print message
+                                return
 
                     reward_sum = 0
 
