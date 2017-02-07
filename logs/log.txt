@@ -3907,3 +3907,8 @@ ep: 106200, running mean: 3.328024
 ep: 106300, running mean: 3.369196
 ep: 106400, running mean: 3.316335
 ep: 106500, running mean: 3.303849
+ep: 106600, running mean: 3.217271
+ep: 106700, running mean: 3.273227
+ep: 106800, running mean: 3.152223
+ep: 106900, running mean: 3.351084
+ep: 107000, running mean: 3.509278
