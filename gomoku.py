@@ -1,5 +1,5 @@
 """
-Game of Gomoku
+Game of Gomoku, This implements the Gomoku OPEN AI environment.
 """
 import sys
 import numpy as np
