@@ -13,7 +13,7 @@ def firstmove(board):
     even think- it should just pick the middle
     position
     """
-    x = board.size/2
+    x = board.size//2
     return (x,x)
 
 def secondmove(board):
@@ -27,11 +27,11 @@ def secondmove(board):
     board if one exists
     """
     (oy,ox) = board.black[0]
-    if oy <= board.size/2:
+    if oy <= board.size//2:
         dy = 1
     else: dy = -1
 
-    if ox <=board.size/2:
+    if ox <=board.size//2:
         dx = 1
     else: dx = -1
     return (oy+dy,ox+dx)
@@ -118,7 +118,7 @@ def evaluate_position(board,position):
     if board._valid_move(position) else 0
 
 
-def attackArea((y,x), connect):
+def attackArea(y,x, connect):
     """
     (y,x)  : (int,int)
     connect: int
@@ -151,7 +151,7 @@ def topatoms(board,limit):
     topqueue = q.PriorityQueue()
     spots = set()
     for t in board.black+board.white:
-        for m in attackArea(t,len(board)):
+        for m in attackArea(*t,len(board)):
             if board._inBoard(m):
                 spots.add(m)
     for r in spots:

@@ -45,7 +45,7 @@ def calculate_safety(data):
             return ("C", "#EEC700")
         else: # Minor violation
             minor = data['actions'].apply(lambda x: ast.literal_eval(x)[1]).sum()
-            if minor >= len(data)/2: # Minor violation in at least half of the trials
+            if minor >= len(data)//2: # Minor violation in at least half of the trials
                 return ("B", "green")
             else:
                 return ("A", "green")

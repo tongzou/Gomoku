@@ -266,7 +266,7 @@ class GomokuEnv(gym.Env):
         index = re.search(pattern, state)
         if index is not None:
             index = index.start()
-            index -= index / (d + 1)
+            index -= index // (d + 1)
             index = GomokuEnv.action_to_coordinate(player_board, index)
         return index
 

@@ -8,7 +8,7 @@ from gomoku import GomokuEnv as Env
     This is the opponent using classic AI written by Oren Finard. The files are in the opponent directory.
     This is simply a wrapper for it.
 '''
-'''
+#'''
 def get_ai_policy(board_size, tlimit):
     def opponent_policy(curr_state, prev_state, prev_action):
         # check if a new games is started.
@@ -33,7 +33,7 @@ def get_ai_policy(board_size, tlimit):
         return Env.coordinate_to_action(curr_state, move)
 
     return opponent_policy
-'''
+#'''
 '''
     Implements the naive policy. This will be the evaluation metric for the Agent.
     level:  0 do not search for connection
@@ -87,7 +87,7 @@ def get_naive_policy(board_size, level=3):
             '''
                 First move should be the center of the board.
             '''
-            move = (board_size/2, board_size/2)
+            move = (board_size//2, board_size//2)
         elif opponent_policy.second_move:
             '''
                 If the AI must go second, it shouldn't think,
@@ -95,12 +95,12 @@ def get_naive_policy(board_size, level=3):
                 placed tile; diagonal into the larger area of the
                 board if one exists
             '''
-            if coords[1] <= board_size/2:
+            if coords[1] <= board_size//2:
                 dy = 1
             else:
                 dy = -1
 
-            if coords[0] <= board_size/2:
+            if coords[0] <= board_size//2:
                 dx = 1
             else:
                 dx = -1

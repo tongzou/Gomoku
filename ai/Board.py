@@ -57,7 +57,7 @@ class Board:
     def turn(self): #returns the color object of whoever's turn it is
         return color(len(self.black)==len(self.white))
 
-    def _valid_move(self, (y,x)):
+    def _valid_move(self, y,x):
         """
         (y,x) : (int,int)
         return: bool
@@ -67,10 +67,10 @@ class Board:
         in the board that is unoccupied.
         Else, False
         """
-        return self._inBoard((y,x)) and\
+        return self._inBoard(y,x) and\
            self.board[y][x] == "."
 
-    def _inBoard(self,(y,x)):
+    def _inBoard(self,y,x):
         """
         (y,x) : (int,int)
         return: bool
@@ -104,7 +104,7 @@ class Board:
         if self.win:
             #print("The Game Is Already Over")
             return other
-        if not other._valid_move((y,x)):
+        if not other._valid_move(y,x):
             turn.swap()
             other.winstatement = "Invalid Move ({1},{2}) Played: {0} Wins by Default\n".format(str(turn),y,x)
             other.win = True
@@ -115,7 +115,7 @@ class Board:
         other.checkWinningMove()
         return other
 
-    def _checkPath(self, color, (y,x), (py,px), counter):
+    def _checkPath(self, color, y,x, py,px, counter):
         """
         color  : color object
         (y,x)  : (int,int)
@@ -129,11 +129,11 @@ class Board:
         counter ==0 or self.board[y][x] !=color.symbol
         """
         if not counter or \
-       not self._inBoard((y,x)) or \
+       not self._inBoard(y,x) or \
        self.board[y][x] != color.symbol:
             return 0
         return 1 + \
-    (self._checkPath(color,(y+py,x+px),(py,px),counter -1) if self._inBoard((y+py,x+px)) else 0)
+    (self._checkPath(color,y+py,x+px,py,px,counter -1) if self._inBoard(y+py,x+px) else 0)
 
 
     def checkWinningMove(self):

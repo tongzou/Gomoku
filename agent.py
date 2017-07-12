@@ -129,7 +129,7 @@ class Agent:
                 if render:
                     env.render()
                 episode_number += 1
-                print('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !')
+                print(('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !'))
                 observation = env.reset()  # reset env
 
         print('Total wins for the agent is %f, the winning ratio for the agent is: %f' % (win, float(win)/float(size)))

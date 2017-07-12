@@ -161,8 +161,8 @@ class PGAgent(Agent):
         else:
             self.set_opponent_policy(env, opponent)
 
-        grad_buffer = {k: np.zeros_like(v) for k, v in self.model.iteritems()}  # update buffers that add up gradients over a batch
-        rmsprop_cache = {k: np.zeros_like(v) for k, v in self.model.iteritems()}  # rmsprop memory
+        grad_buffer = {k: np.zeros_like(v) for k, v in self.model.items()}  # update buffers that add up gradients over a batch
+        rmsprop_cache = {k: np.zeros_like(v) for k, v in self.model.items()}  # rmsprop memory
 
         while True:
             if render:
@@ -189,7 +189,7 @@ class PGAgent(Agent):
                     env.render()
                 episode_number += 1
 
-                print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !')
+                print (('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !'))
 
                 # only do the gradient for every batch_size episodes
                 if episode_number % batch_size == 0:
@@ -216,7 +216,7 @@ class PGAgent(Agent):
                     # perform rmsprop parameter update every batch_size episodes
                     if episode_number % (update_per_batch * batch_size) == 0:
                         print('update params')
-                        for k, v in self.model.iteritems():
+                        for k, v in self.model.items():
                             g = grad_buffer[k]  # gradient
                             rmsprop_cache[k] = decay_rate * rmsprop_cache[k] + (1 - decay_rate) * g**2
                             self.model[k] += learning_rate * g / (np.sqrt(rmsprop_cache[k]) + 1e-5)
