@@ -1,5 +1,5 @@
-import Queue as q
-import Board as b
+import queue as q
+from .Board import Board as b
 import time
 import random
 
@@ -159,7 +159,7 @@ def topatoms(board,limit):
     toplist = []
     for x in range(limit):
         toplist.append(topqueue.get())
-    return map(lambda (x,y): (-x,y), toplist)
+    return map(lambda x,y: (-x,y), toplist)
 
 
 
@@ -226,12 +226,12 @@ def nextMove(board, tlimit, dive = 1):
             return move
         elif score ==0:
             mehlist.append((score,move))
-	elif score > -1:
-	    bahlist.append((score,move))
+        elif score > -1:
+            bahlist.append((score,move))
     if len(mehlist): return mehlist[0][1]
     elif len(bahlist):
         bahlist.sort()
-	return bahlist[-1][1]
+        return bahlist[-1][1]
     else: return atomlist[0][1]
 
 ########Different versions of quiescent searches below#######################

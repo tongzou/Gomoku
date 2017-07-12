@@ -85,7 +85,7 @@ class Board:
                y >= 0 and \
                y < self.size
 
-    def move(self,(y,x)):
+    def move(self,y,x):
         """
         (y,x) : (int,int)
         return: board object
@@ -158,10 +158,10 @@ class Board:
         if self.connect in checklist:
             self.winstatement = "{0} wins!".format(str(color))
             self.win = True
-	elif len(self.black)+len(self.white) == self.size**2:
-	    self.win = True
-	    self.winstatement = "It's a Draw (Defensive win for WHITE)"
-        return
+        elif len(self.black)+len(self.white) == self.size**2:
+            self.win = True
+            self.winstatement = "It's a Draw (Defensive win for WHITE)"
+            return
 
 class color:
     """
