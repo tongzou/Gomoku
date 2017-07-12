@@ -96,7 +96,7 @@ def _eval_func(board,position, attack):
         if paths_num>0:
             for i in range(paths_num):
                 consec = pathlist[i:i+board.connect].count(color.symbol)
-                total_consec += consec**5 if consec!=board.connect-1 else 100**(9 if attack else 8) 
+                total_consec += consec**5 if consec!=board.connect-1 else 100**(9 if attack else 8)
     return total_consec
 
 def evaluate_position(board,position):
@@ -137,7 +137,7 @@ def attackArea((y,x), connect):
                 px = x+dx*i*s
                 area.append((py,px))
     return area
-    
+
 def topatoms(board,limit):
     """
     board : board object
@@ -156,7 +156,7 @@ def topatoms(board,limit):
                 spots.add(m)
     for r in spots:
         topqueue.put((evaluate_position(board,r)*(-1),r))
-    toplist = []       
+    toplist = []
     for x in range(limit):
         toplist.append(topqueue.get())
     return map(lambda (x,y): (-x,y), toplist)
@@ -183,9 +183,9 @@ def justBestMoves(board,limit):
         if val ==topval:
             bestlist.append(move)
     return bestlist
-            
 
-    
+
+
 def nextMove(board, tlimit, dive = 1):
     """
     board : board object
@@ -203,7 +203,7 @@ def nextMove(board, tlimit, dive = 1):
     atomlist = topatoms(board,checkTOP_)
     mehlist = []
     bahlist = []
-    
+
     tfract = (tlimit-((0.1)*(tlimit/10 +1)))/float(len(atomlist))
     for atom in atomlist:
         (val,move) = atom
@@ -300,9 +300,9 @@ def dive_5(board,dlimit):
 
 
 
-    
-    
-    
 
-    
-    
+
+
+
+
+

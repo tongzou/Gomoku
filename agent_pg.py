@@ -1,5 +1,5 @@
 import numpy as np
-import cPickle as pickle
+import pickle
 from gomoku import GomokuEnv
 import random
 import os
@@ -30,7 +30,7 @@ def discount_rewards(r, gamma):
     """ take 1D float array of rewards and compute discounted reward """
     discounted_r = np.zeros(r.shape, dtype=float)
     running_add = 0
-    for t in reversed(xrange(0, r.size)):
+    for t in reversed(range(0, r.size)):
         if r[t] != 0:
             running_add = 0  # reset the sum, since this was a game boundary
         running_add = running_add * gamma + r[t]
@@ -215,7 +215,7 @@ class PGAgent(Agent):
 
                     # perform rmsprop parameter update every batch_size episodes
                     if episode_number % (update_per_batch * batch_size) == 0:
-                        print 'update params'
+                        print('update params')
                         for k, v in self.model.iteritems():
                             g = grad_buffer[k]  # gradient
                             rmsprop_cache[k] = decay_rate * rmsprop_cache[k] + (1 - decay_rate) * g**2
@@ -223,7 +223,7 @@ class PGAgent(Agent):
                             grad_buffer[k] = np.zeros_like(v)  # reset batch gradient buffer
 
                     running_reward = reward_sum if running_reward is None else running_reward * 0.99 + reward_sum * 0.01
-                    print 'episode reward total was %f. running mean: %f' % (reward_sum, running_reward)
+                    print('episode reward total was %f. running mean: %f' % (reward_sum, running_reward))
 
                     if episode_number % 100 == 0:
                         message = 'ep: %d, running mean: %f' % (episode_number, running_reward)
@@ -236,7 +236,7 @@ class PGAgent(Agent):
                                 message = 'replace opponent model now: ep ' + str(episode_number) + '\n' + \
                                           'running mean: ' + str(running_reward)
                                 self.log(message)
-                                print message
+                                print(message)
                                 # save the opponent model
                                 pickle.dump(self.model, open(self.get_opponent_model_file_name(), 'wb'))
                                 self.set_opponent_policy(env, self.get_policy(self.model, GomokuEnv.WHITE))
@@ -245,7 +245,7 @@ class PGAgent(Agent):
                                 # Yay, we have beaten the opponent
                                 message = 'opponent is beaten: %s' % running_reward
                                 self.log(message)
-                                print message
+                                print(message)
                                 return
 
                     reward_sum = 0

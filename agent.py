@@ -29,14 +29,29 @@ gym.envs.registration.register(
     }
 )
 
+gym.envs.registration.register(
+    id='TicTacToe-v0',
+    entry_point='gomoku:GomokuEnv',
+    kwargs={
+        'player_color': 'black',
+        'opponent': 'random',
+        'observation_type': 'numpy3c',
+        'illegal_move_mode': 'lose',
+        'board_size': 3,
+        'win_len': 3
+    }
+)
+
+
 def cls():
-    os.system('cls')  # For Windows
-    os.system('clear')  # For Linux/OS X
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 class Agent:
-    def __init__(self, board_size=9, log_file="log.txt"):
+    def __init__(self, board_size=9, win_len=5, log_file="log.txt"):
+        assert isinstance(board_size, int) and (board_size == 3 or board_size == 9 or board_size == 15), 'Invalid board size: {}'.format(board_size)
         self.N = board_size
+        self.L = win_len
         self.D = self.N * self.N
         self.log_file = log_file
 
@@ -45,15 +60,17 @@ class Agent:
 
     def log(self, message):
         if self.logger is None:
-            self.logger = open(os.path.join('logs', self.log_file), 'ab')
+            self.logger = open(os.path.join('logs', self.log_file), 'a')
         self.logger.write(message + '\n')
         self.logger.flush()
 
     def create_env(self, color=GomokuEnv.BLACK):
         if self.N == 15:
             env = gym.make("Gomoku15x15-v0")
-        else:
+        elif self.N == 9:
             env = gym.make("Gomoku9x9-v0")
+        elif self.N == 3:
+            env = gym.make("TicTacToe-v0")
 
         env.player_color = color
         return env
@@ -112,10 +129,10 @@ class Agent:
                 if render:
                     env.render()
                 episode_number += 1
-                print ('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !')
+                print('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !')
                 observation = env.reset()  # reset env
 
-        print 'Total wins for the agent is %f, the winning ratio for the agent is: %f' % (win, float(win)/float(size))
+        print('Total wins for the agent is %f, the winning ratio for the agent is: %f' % (win, float(win)/float(size)))
 
     def play(self, color, opponent='human'):
         if self.model is None:
@@ -134,7 +151,13 @@ class Agent:
             cls()
             env.render()
             if opponent == 'human':
-                action = input('Please enter your move in the form (x, y):')
+                try:
+                    action = eval(input('Please enter your move in the form (x, y):'))
+                except SyntaxError:
+                    continue
+                except NameError:
+                    return
+
                 action = [action[0] - 1, action[1] - 1]
                 action = GomokuEnv.coordinate_to_action(observation, action)
             else:
@@ -147,12 +170,12 @@ class Agent:
                 env.render()
                 if reward == 1:
                     if opponent == 'human':
-                        print 'You Win!'
+                        print('You Win!')
                     else:
-                        print 'Agent Win!'
+                        print('Agent Win!')
                 else:
                     if opponent == 'human':
-                        print 'You Lost!'
+                        print('You Lost!')
                     else:
-                        print 'Agent Lost!'
+                        print('Agent Lost!')
                 return

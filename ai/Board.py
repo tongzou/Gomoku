@@ -45,7 +45,7 @@ class Board:
     def __getitem__(self,num): return self.board[num]
 
     def __eq__(self,other):
-        return ( 
+        return (
         type(self) == type(other) and \
         self.white == other.white and \
         self.black == other.black and \
@@ -69,7 +69,7 @@ class Board:
         """
         return self._inBoard((y,x)) and\
            self.board[y][x] == "."
-        
+
     def _inBoard(self,(y,x)):
         """
         (y,x) : (int,int)
@@ -84,7 +84,7 @@ class Board:
                x < self.size and \
                y >= 0 and \
                y < self.size
-       
+
     def move(self,(y,x)):
         """
         (y,x) : (int,int)
@@ -109,7 +109,7 @@ class Board:
             other.winstatement = "Invalid Move ({1},{2}) Played: {0} Wins by Default\n".format(str(turn),y,x)
             other.win = True
             return other
-        
+
         other.board[y][x] = turn.symbol
         other.black.append((y,x)) if turn.isBlack else other.white.append((y,x))
         other.checkWinningMove()

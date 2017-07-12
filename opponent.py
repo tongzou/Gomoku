@@ -1,5 +1,5 @@
-import ai.Board as b
-import ai.Eval_funcs as ef
+#import ai.Board as b
+#import ai.Eval_funcs as ef
 import numpy as np
 import random
 from gomoku import GomokuEnv as Env
@@ -7,6 +7,7 @@ from gomoku import GomokuEnv as Env
 '''
     This is the opponent using classic AI written by Oren Finard. The files are in the opponent directory.
     This is simply a wrapper for it.
+'''
 '''
 def get_ai_policy(board_size, tlimit):
     def opponent_policy(curr_state, prev_state, prev_action):
@@ -32,7 +33,7 @@ def get_ai_policy(board_size, tlimit):
         return Env.coordinate_to_action(curr_state, move)
 
     return opponent_policy
-
+'''
 '''
     Implements the naive policy. This will be the evaluation metric for the Agent.
     level:  0 do not search for connection

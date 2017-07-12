@@ -43,7 +43,7 @@ class GomokuEnv(gym.Env):
     WHITE = 1
     metadata = {"render.modes": ["ansi", "human"]}
 
-    def __init__(self, player_color, opponent, observation_type, illegal_move_mode, board_size):
+    def __init__(self, player_color, opponent, observation_type, illegal_move_mode, board_size, win_len = 5):
         """
         Args:
             player_color: Stone color for the agent. Either 'black' or 'white'
@@ -51,9 +51,12 @@ class GomokuEnv(gym.Env):
             observation_type: State encoding
             illegal_move_mode: What to do when the agent makes an illegal move. Choices: 'raise' or 'lose'
             board_size: size of the Go board
+            win_len: how many pieces connected will be considered as a win.
         """
         assert isinstance(board_size, int) and board_size >= 1, 'Invalid board size: {}'.format(board_size)
+        assert isinstance(win_len, int) and win_len >= 3, 'Invalid winning length: {}'.format(win_len)
         self.board_size = board_size
+        self.win_len = win_len
 
         colormap = {
             'black': GomokuEnv.BLACK,
@@ -148,7 +151,7 @@ class GomokuEnv(gym.Env):
             else:
                 GomokuEnv.make_move(self.state, a, 1 - self.player_color)
 
-        reward = GomokuEnv.game_finished(self.state, self.player_color)
+        reward = GomokuEnv.game_finished(self.state, self.player_color, self.win_len)
         self.done = reward != 0
 
         # check to see if we need to roll back opponent move if we have won already.
@@ -172,11 +175,10 @@ class GomokuEnv(gym.Env):
         if d > 9:
             outfile.write(' ' * 24)
             for j in range(10, d + 1):
-                outfile.write(' ' + str(j/10))
+                outfile.write(' ' + str(int(j/10)))
             outfile.write('\n')
         outfile.write(' ' * 6)
         for j in range(d):
-            #outfile.write(' ' + string.ascii_uppercase[j])
             outfile.write(' ' + str((j + 1) % 10))
         outfile.write('\n')
         outfile.write(' ' * 5 + '+' + '-' * (d * 2 + 1) + '+\n')
@@ -287,12 +289,13 @@ class GomokuEnv(gym.Env):
         return None
 
     @staticmethod
-    def game_finished(board, first_color):
+    def game_finished(board, first_color, win_len):
         # Returns 1 if first_color wins, -1 if first_color loses and 0 otherwise
-        if GomokuEnv.search_board(board[first_color, :, :], '1{5}', 5) is not None:
+        pattern = '1{' + str(win_len) + '}'
+        if GomokuEnv.search_board(board[first_color, :, :], pattern, win_len) is not None:
             return 1
 
-        if GomokuEnv.search_board(board[1 - first_color, :, :], '1{5}', 5) is not None:
+        if GomokuEnv.search_board(board[1 - first_color, :, :], pattern, win_len) is not None:
             return -1
 
         return 0
