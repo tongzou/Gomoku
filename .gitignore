@@ -1,0 +1,3 @@
+logs/*
+__pycache__/
+ai/__pycache__/*
