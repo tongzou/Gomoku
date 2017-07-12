@@ -24,3 +24,64 @@ using saved model.
 no saved model.
 using saved model.
 no saved model.
+using saved model.
+no saved model.
+using saved model.
+no saved model.
+using saved model.
+no saved model.
+start training - 2017-07-12 15:14:45.622135
+using saved model.
+no saved model.
+using saved model.
+no saved model.
+start training - 2017-07-12 15:14:54.062571
+using saved model.
+no saved model.
+start training - 2017-07-12 15:15:29.884854
+using saved model.
+no saved model.
+start training - 2017-07-12 15:31:48.302773
+using saved model.
+no saved model.
+start training - 2017-07-12 15:32:43.868199
+using saved model.
+no saved model.
+start training - 2017-07-12 15:33:47.800056
+using saved model.
+no saved model.
+start training - 2017-07-12 15:36:19.858130
+using saved model.
+no saved model.
+start training - 2017-07-12 15:37:48.895279
+using saved model.
+no saved model.
+start training - 2017-07-12 15:38:03.561517
+using saved model.
+no saved model.
+start training - 2017-07-12 15:38:28.506762
+ep: 100, running mean: 1.784162
+ep: 200, running mean: 1.498196
+ep: 300, running mean: 1.221171
+ep: 400, running mean: 1.355029
+ep: 500, running mean: 1.509017
+ep: 600, running mean: 1.593680
+ep: 700, running mean: 1.594924
+ep: 800, running mean: 1.937110
+ep: 900, running mean: 2.573145
+ep: 1000, running mean: 2.613827
+ep: 1100, running mean: 3.320077
+ep: 1200, running mean: 3.348736
+ep: 1300, running mean: 3.546915
+ep: 1400, running mean: 3.936364
+ep: 1500, running mean: 4.516157
+opponent is beaten: 4.5161566187255415
+using saved model.
+start training - 2017-07-12 15:39:17.979729
+ep: 100, running mean: 2.075701
+ep: 200, running mean: 2.337202
+ep: 300, running mean: 2.588875
+ep: 400, running mean: 3.297511
+ep: 500, running mean: 3.402143
+ep: 600, running mean: 4.033016
+opponent is beaten: 4.033016316615255
