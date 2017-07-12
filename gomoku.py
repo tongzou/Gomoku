@@ -43,7 +43,7 @@ class GomokuEnv(gym.Env):
     WHITE = 1
     metadata = {"render.modes": ["ansi", "human"]}
 
-    def __init__(self, player_color, opponent, observation_type, illegal_move_mode, board_size, win_len = 5):
+    def __init__(self, player_color, opponent, observation_type, illegal_move_mode, board_size, win_len=5):
         """
         Args:
             player_color: Stone color for the agent. Either 'black' or 'white'
@@ -53,7 +53,7 @@ class GomokuEnv(gym.Env):
             board_size: size of the Go board
             win_len: how many pieces connected will be considered as a win.
         """
-        assert isinstance(board_size, int) and board_size >= 1, 'Invalid board size: {}'.format(board_size)
+        assert isinstance(board_size, int) and board_size >= 3, 'Invalid board size: {}'.format(board_size)
         assert isinstance(win_len, int) and win_len >= 3, 'Invalid winning length: {}'.format(win_len)
         self.board_size = board_size
         self.win_len = win_len

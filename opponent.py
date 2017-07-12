@@ -1,5 +1,5 @@
-#import ai.Board as b
-#import ai.Eval_funcs as ef
+import ai.Board as b
+import ai.Eval_funcs as ef
 import numpy as np
 import random
 from gomoku import GomokuEnv as Env

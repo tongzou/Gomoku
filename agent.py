@@ -5,51 +5,13 @@ import opponent
 import os
 import time
 
-gym.envs.registration.register(
-    id='Gomoku9x9-v0',
-    entry_point='gomoku:GomokuEnv',
-    kwargs={
-        'player_color': 'black',
-        'opponent': 'random',
-        'observation_type': 'numpy3c',
-        'illegal_move_mode': 'lose',
-        'board_size': 9,
-    }
-)
-
-gym.envs.registration.register(
-    id='Gomoku15x15-v0',
-    entry_point='gomoku:GomokuEnv',
-    kwargs={
-        'player_color': 'black',
-        'opponent': 'random',
-        'observation_type': 'numpy3c',
-        'illegal_move_mode': 'lose',
-        'board_size': 15,
-    }
-)
-
-gym.envs.registration.register(
-    id='TicTacToe-v0',
-    entry_point='gomoku:GomokuEnv',
-    kwargs={
-        'player_color': 'black',
-        'opponent': 'random',
-        'observation_type': 'numpy3c',
-        'illegal_move_mode': 'lose',
-        'board_size': 3,
-        'win_len': 3
-    }
-)
-
-
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
 class Agent:
     def __init__(self, board_size=9, win_len=5, log_file="log.txt"):
-        assert isinstance(board_size, int) and (board_size == 3 or board_size == 9 or board_size == 15), 'Invalid board size: {}'.format(board_size)
+        assert isinstance(board_size, int) and board_size >= 3, 'Invalid board size: {}'.format(board_size)
         self.N = board_size
         self.L = win_len
         self.D = self.N * self.N
@@ -65,13 +27,25 @@ class Agent:
         self.logger.flush()
 
     def create_env(self, color=GomokuEnv.BLACK):
-        if self.N == 15:
-            env = gym.make("Gomoku15x15-v0")
-        elif self.N == 9:
-            env = gym.make("Gomoku9x9-v0")
-        elif self.N == 3:
-            env = gym.make("TicTacToe-v0")
+        id = 'Gomoku' + str(self.N) + 'x' + str(self.N) + '_' + str(self.L) + '-v0'
+        try:
+            spec = gym.envs.registration.spec(id)
+        except gym.error.UnregisteredEnv:
+            print('registering new gym env id: ' + id)
+            gym.envs.registration.register(
+                id=id,
+                entry_point='gomoku:GomokuEnv',
+                kwargs={
+                    'player_color': 'black',
+                    'opponent': 'random',
+                    'observation_type': 'numpy3c',
+                    'illegal_move_mode': 'lose',
+                    'board_size': self.N,
+                    'win_len': self.L
+                }
+            )
 
+        env = gym.make(id)
         env.player_color = color
         return env
 

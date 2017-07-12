@@ -58,8 +58,8 @@ class PGAgent(Agent):
     '''
         hidden:  # number of hidden layer neurons
     '''
-    def __init__(self, board_size=9, hidden=200, resume=True):
-        Agent.__init__(self, board_size)
+    def __init__(self, board_size=9, win_len=5, hidden=200, resume=True):
+        Agent.__init__(self, board_size, win_len)
         self.H = hidden
 
         # load the saved model first.
