@@ -1,7 +1,7 @@
-import Board as b
+from . import Board as b
 import ast
-import Eval_funcs as ef
-import Queue as q
+from . import Eval_funcs as ef
+import queue as q
 import time
 
 def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False):
@@ -18,17 +18,17 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
     tlimit is the amount of time given to make a move
     If tournament is set to true, then it will work with the tournament.sh scripts
     """
-    if tournament: f = file("mypipe", "w")
+    if tournament: f = open("mypipe", "w")
     while not board_size:
         try:
-            board_size = int(raw_input("Please input a positive integer board size: "))
+            board_size = int(input("Please input a positive integer board size: "))
         except ValueError:
             print("Invalid Board Size")
             continue;
 
     while not connect_size:
         try:
-            connect_size = int(raw_input("Please input a positive integer connection length: "))
+            connect_size = int(input("Please input a positive integer connection length: "))
         except ValueError:
             print("Invalid Connection Length")
             continue;
@@ -42,14 +42,14 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
             print("5)AI vs Random")
             print("6)AI vs AI")
             try:
-                player = int(raw_input())
+                player = int(input())
             except ValueError:
                 print("Invalid Play Mode, please enter a valid integer")
                 continue
     if player in (2,3,4,5,6) and not tlimit:
         while True:
             try:
-                tlimit =int(raw_input("Please input a time constraint as a number of seconds: "))
+                tlimit =int(input("Please input a time constraint as a number of seconds: "))
                 break;
             except ValueError:
                 continue
@@ -63,7 +63,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
     elif player in (1,2):
         while True:
             try:
-                move = ast.literal_eval(raw_input("Please enter your move in format '(y,x)': "))
+                move = ast.literal_eval(input("Please enter your move in format '(y,x)': "))
                 break
             except(ValueError,SyntaxError,TypeError):
                 continue
@@ -80,7 +80,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
         print(board)
         while True:
             try:
-                move = ast.literal_eval(raw_input("Please enter your move in format '(y,x)': "))
+                move = ast.literal_eval(input("Please enter your move in format '(y,x)': "))
                 break
             except(ValueError,SyntaxError,TypeError):
                 continue
@@ -104,7 +104,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
         elif player in (1,2):
             while not board.win:
                 try:
-                    move = ast.literal_eval(raw_input("Please enter your move in format '(y,x)': "))
+                    move = ast.literal_eval(input("Please enter your move in format '(y,x)': "))
                     break
                 except (ValueError,SyntaxError,TypeError):
                     continue
@@ -124,7 +124,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
         elif player in (1,3):
             while not board.win:
                 try:
-                    move = ast.literal_eval(raw_input("Please enter your move in format '(y,x)': "))
+                    move = ast.literal_eval(input("Please enter your move in format '(y,x)': "))
                     break
                 except(ValueError,SyntaxError,TypeError):
                     continue

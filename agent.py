@@ -5,6 +5,7 @@ import opponent
 import os
 import time
 
+
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -29,7 +30,7 @@ class Agent:
     def create_env(self, color=GomokuEnv.BLACK):
         id = 'Gomoku' + str(self.N) + 'x' + str(self.N) + '_' + str(self.L) + '-v0'
         try:
-            spec = gym.envs.registration.spec(id)
+            gym.envs.registration.spec(id)
         except gym.error.UnregisteredEnv:
             print('registering new gym env id: ' + id)
             gym.envs.registration.register(
@@ -58,8 +59,10 @@ class Agent:
 
         if isinstance(policy, str):
             if policy == 'ai':
+                assert self.L == 5, 'Only works if the winning length is 5, current winning length is : {}'.format(self.L)
                 env.opponent_policy = opponent.get_ai_policy(self.N, 0.001)
             elif policy.startswith('naive'):
+                assert self.L == 5, 'Only works if the winning length is 5, current winning length is : {}'.format(self.L)
                 try:
                     level = int(policy[-1])
                 except:
@@ -106,7 +109,7 @@ class Agent:
                 print(('ep %d: game finished, reward: %f' % (episode_number, reward)) + ('' if reward == -1 else ' !'))
                 observation = env.reset()  # reset env
 
-        print('Total wins for the agent is %f, the winning ratio for the agent is: %f' % (win, float(win)/float(size)))
+        print('Total wins for the agent is %f, the winning ratio for the agent is: %f' % (win, win/size))
 
     def play(self, color, opponent='human'):
         if self.model is None:

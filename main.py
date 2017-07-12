@@ -4,8 +4,8 @@ from gomoku import GomokuEnv
 from agent_pg import PGAgent
 agent = PGAgent(board_size=3, win_len=3, hidden=500)
 
-#from agent_torch import TorchAgent
-#agent = TorchAgent()
+'''from agent_torch import TorchAgent
+agent = TorchAgent()'''
 
 def run():
     cls()
