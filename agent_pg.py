@@ -66,7 +66,7 @@ class PGAgent(Agent):
         if resume:
             try:
                 self.log('using saved model.')
-                self.model = pickle.load(open(self.get_model_file_name(), 'rb'))
+                self.model = pickle.load(open(self.get_model_file_name(), 'rb'), encoding='latin1')
             except:
                 self.log('no saved model.')
                 self.model = None
