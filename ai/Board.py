@@ -152,8 +152,8 @@ class Board:
         for move in ((1,0),(0,1),(1,1),(1,-1)):
             opp = tuple(map(lambda x: -x, move))
             checklist.append(1 +\
-                      self._checkPath(color,tuple(sum(x) for x in zip(pos,move)),move,depth) +\
-                      self._checkPath(color,tuple(sum(x) for x in zip(pos,opp)), opp,depth)
+                      self._checkPath(color,*tuple(sum(x) for x in zip(pos,move)),*move,depth) +\
+                      self._checkPath(color,*tuple(sum(x) for x in zip(pos,opp)), *opp,depth)
                       )
         if self.connect in checklist:
             self.winstatement = "{0} wins!".format(str(color))

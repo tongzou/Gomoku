@@ -48,7 +48,7 @@ def randommove(board):
     while t:
         y = random.randint(0,board.size-1)
         x = random.randint(0,board.size-1)
-        t = not board._valid_move((y,x))
+        t = not board._valid_move(y,x)
     return (y,x)
 
 
@@ -81,10 +81,10 @@ def _eval_func(board,position, attack):
             for i in range(1,board.connect):
                 py = y+dy*i*s
                 px = x+dx*i*s   #out of board, or enemy blocking(VVVBelowVVV)
-                if (not board._inBoard((py,px)) or \
+                if (not board._inBoard(py,px) or \
 		    board[py][px] == color.getNot().symbol) or \
                    (i+1 == board.connect and \
-		    board._inBoard((py+dy*s,px+dx*s)) and \
+		    board._inBoard(py+dy*s,px+dx*s) and \
 		    board[py+dy*s][px+dx*s] == color.symbol): #checking for overline rule
                     break
                 elif s>0:#append to back if right of position
@@ -115,7 +115,7 @@ def evaluate_position(board,position):
     """
 
     return _eval_func(board,position,True)+_eval_func(board,position,False) \
-    if board._valid_move(position) else 0
+    if board._valid_move(*position) else 0
 
 
 def attackArea(y,x, connect):
@@ -152,14 +152,14 @@ def topatoms(board,limit):
     spots = set()
     for t in board.black+board.white:
         for m in attackArea(*t,len(board)):
-            if board._inBoard(m):
+            if board._inBoard(*m):
                 spots.add(m)
     for r in spots:
         topqueue.put((evaluate_position(board,r)*(-1),r))
     toplist = []
     for x in range(limit):
         toplist.append(topqueue.get())
-    return map(lambda x,y: (-x,y), toplist)
+    return list(map(lambda xy: (-xy[0],xy[1]), toplist))
 
 
 
@@ -207,7 +207,7 @@ def nextMove(board, tlimit, dive = 1):
     tfract = (tlimit-((0.1)*(tlimit/10 +1)))/float(len(atomlist))
     for atom in atomlist:
         (val,move) = atom
-        nextboard = board.move(move)
+        nextboard = board.move(*move)
         if nextboard.win:
             return move
         if dive ==1:
@@ -239,7 +239,7 @@ def nextMove(board, tlimit, dive = 1):
 
 def dive_1(board, dlimit):
     bestmove = topatoms(board,1)[0][1]
-    newboard = board.move(bestmove)
+    newboard = board.move(*bestmove)
     if newboard.win: return 1
     elif not dlimit: return 0
     else:            return -dive_1(newboard,dlimit-1)
@@ -249,7 +249,7 @@ def dive_2(board,dlimit):
     overall = 0.0
     split_factor = 1.0/len(bestmoves)
     for bmove in bestmoves:
-        newboard = board.move(bmove)
+        newboard = board.move(*bmove)
         if newboard.win: return 1
         elif not dlimit: continue
         else:
@@ -260,14 +260,14 @@ def dive_2(board,dlimit):
 
 def dive_3(board,dlimit,start_tyme,tlimit):
     bestmove = topatoms(board,1)[0][1]
-    newboard = board.move(bestmove)
+    newboard = board.move(*bestmove)
     if newboard.win: return 1
     elif time.time()-start_tyme>tlimit or not dlimit: return 0
     else:            return -dive_3(newboard,dlimit-1,start_tyme,tlimit)
 
 def dive_4(board,start_tyme,tlimit):
     bestmove = topatoms(board,1)[0][1]
-    newboard = board.move(bestmove)
+    newboard = board.move(*bestmove)
     if newboard.win: return 1
     elif time.time()-start_tyme>tlimit: return 0
     else:            return -dive_4(newboard,start_tyme,tlimit)
@@ -278,7 +278,7 @@ def dive_5(board,dlimit):
     overall = 0.0
     split_factor = 1.0/len(bestmoves)
     for bmove in bestmoves:
-        newboard = board.move(bmove[1])
+        newboard = board.move(*bmove[1])
         if newboard.win: return 1
         elif not dlimit: return 0
         else:

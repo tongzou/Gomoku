@@ -69,7 +69,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
                 continue
     elif player == 4:
         move = ef.randommove(board)
-    board = board.move(move)
+    board = board.move(*move)
     print("Black moved {0}".format(move))
     if tournament:
         f.write("{0}".format(move))
@@ -86,7 +86,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
                 continue
     elif player == 5:
         move = ef.randommove(board)
-    board = board.move(move)
+    board = board.move(*move)
     if tournament:
         f.write("{0}".format(move))#DEBUG!!!!!
         f.flush()
@@ -110,7 +110,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
                     continue
         elif player == 4:
             move = ef.randommove(board)
-        board = board.move(move)
+        board = board.move(*move)
         print(board)
         print("Black moves {0}".format(move))
     if tournament:
@@ -130,7 +130,7 @@ def gomoku(board_size=0, connect_size=0, player=0, tlimit =0, tournament = False
                     continue
         elif player == 5:
             move = ef.randommove(board)
-        board = board.move(move)
+        board = board.move(*move)
         print(board)
         print("White moves {0}".format(move))
     if tournament:
