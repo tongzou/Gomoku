@@ -35,6 +35,9 @@ def discount_rewards(r, gamma):
             running_add = 0  # reset the sum, since this was a game boundary
         running_add = running_add * gamma + r[t]
         discounted_r[t] = running_add
+
+    if np.count_nonzero(discounted_r) == 0:
+        print('reward is all zero!!!!!!')
     return discounted_r
 
 
@@ -58,15 +61,15 @@ class PGAgent(Agent):
     '''
         hidden:  # number of hidden layer neurons
     '''
-    def __init__(self, board_size=9, win_len=5, hidden=200, resume=True):
+    def __init__(self, board_size=9, win_len=5, hidden=200, model=None):
         Agent.__init__(self, board_size, win_len)
         self.H = hidden
 
         # load the saved model first.
-        if resume:
+        if model:
             try:
                 self.log('using saved model.')
-                self.model = pickle.load(open(self.get_model_file_name(), 'rb'), encoding='latin1')
+                self.model = pickle.load(open(model, 'rb'))
             except:
                 self.log('no saved model.')
                 self.model = None
@@ -105,31 +108,25 @@ class PGAgent(Agent):
         return action
 
     '''
-        Choose a move based on the current board, trained model and player color
-        valid_only: whether to choose valid moves only.
+        Choose a valid move based on the current board, trained model and player color
     '''
-    def _choose_move(self, observation, model, color, valid_only=True):
+    def _choose_move(self, observation, model, color):
         # preprocess the observation
         x = prepro(observation, color)
 
         # forward the policy network and sample an action from the returned probability
         aprob, h = policy_forward(model, x)
 
-        if valid_only:
-            possible_moves = GomokuEnv.get_possible_actions(observation)
-            if len(possible_moves) == 0:
-                return self.D, x, aprob, h  # resign
+        possible_moves = GomokuEnv.get_possible_actions(observation)
 
-            newprob = np.array([aprob[k] for k in possible_moves])
-            max = newprob.max()
+        newprob = np.array([aprob[k] for k in possible_moves])
+        max = newprob.max()
 
-            if max == 0:
-                # self.log('all probabilies are zero!!!!')
-                action = random.choice(possible_moves)
-            else:
-                action = possible_moves[np.random.choice(np.where(newprob == max)[0])]
+        if max == 0:
+            # self.log('all probabilies are zero!!!!')
+            action = random.choice(possible_moves)
         else:
-            action = np.random.choice(np.where(aprob == aprob.max())[0])
+            action = possible_moves[np.random.choice(np.where(newprob == max)[0])]
 
         return action, x, aprob, h
 
@@ -141,10 +138,9 @@ class PGAgent(Agent):
         gamma:  # discount factor for reward
         decay_rate:  # decay factor for RMSProp leaky sum of grad^2
         opponent: if None, will use self play. If not none, will use that as the opponent.
-        valid_only: whether restrict to valid moves only.
     '''
     def train(self, render=False, model_threshold=0.5, batch_size=10, update_per_batch=10,
-              learning_rate=1e-4, gamma=0.99, decay_rate=0.99, opponent=None, valid_only=True):
+              learning_rate=1e-4, gamma=0.99, decay_rate=0.99, opponent=None):
         # setup logging
         self.log("start training - " + str(datetime.now()))
 
@@ -168,7 +164,7 @@ class PGAgent(Agent):
             if render:
                 env.render()
 
-            action, x, aprob, h = self._choose_move(observation, self.model, GomokuEnv.BLACK, valid_only=valid_only)
+            action, x, aprob, h = self._choose_move(observation, self.model, GomokuEnv.BLACK)
 
             # record various intermediates (needed later for backprop)
             xs.append(x)  # observation

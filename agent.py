@@ -62,12 +62,11 @@ class Agent:
                 assert self.L == 5, 'Only works if the winning length is 5, current winning length is : {}'.format(self.L)
                 env.opponent_policy = opponent.get_ai_policy(self.N, 0.001)
             elif policy.startswith('naive'):
-                assert self.L == 5, 'Only works if the winning length is 5, current winning length is : {}'.format(self.L)
                 try:
                     level = int(policy[-1])
                 except:
                     level = 0
-                env.opponent_policy = opponent.get_naive_policy(self.N, level)
+                env.opponent_policy = opponent.get_naive_policy(self.N, level, self.L)
             elif policy == 'random':
                 env.opponent = "random"
                 env._seed()
@@ -82,7 +81,7 @@ class Agent:
     def train(self):
         pass
 
-    def test(self, color=GomokuEnv.BLACK, opponent="naive", render=False, size=100):
+    def test(self, color=GomokuEnv.BLACK, opponent="naive3", render=False, size=100):
         if self.model is None:
             raise BaseException("This agent is not trained.")
 

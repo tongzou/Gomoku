@@ -130,9 +130,10 @@ class GomokuEnv(gym.Env):
                 return self.state, -1., True, {'state': self.state}
             else:
                 raise error.Error('Unsupported illegal move action: {}'.format(self.illegal_move_mode))
-        else:
-            GomokuEnv.make_move(self.state, action, self.player_color)
-            self.prev_move = action
+
+        GomokuEnv.make_move(self.state, action, self.player_color)
+        self.prev_move = action
+        remaining_moves = np.count_nonzero(self.state[2, :, :])
 
         # Opponent play
         a = self.opponent_policy(self.state, prev_state, action)
@@ -152,7 +153,7 @@ class GomokuEnv(gym.Env):
                 GomokuEnv.make_move(self.state, a, 1 - self.player_color)
 
         reward = GomokuEnv.game_finished(self.state, self.player_color, self.win_len)
-        self.done = reward != 0
+        self.done = reward != 0 or remaining_moves == 0 or remaining_moves == 1
 
         # check to see if we need to roll back opponent move if we have won already.
         if reward == 1 and a is not None:
@@ -242,7 +243,8 @@ class GomokuEnv(gym.Env):
         return [GomokuEnv.coordinate_to_action(board, [x, y]) for x, y in zip(free_x, free_y)]
 
     '''
-        pattern is a regular expression to test for and size is the length of the pattern
+        pattern is a regular expression to test for and size is the length of the pattern. size is only used for searching
+        diagonal patterns.
     '''
     @staticmethod
     def search_board(player_board, pattern, size):
