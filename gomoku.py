@@ -34,6 +34,131 @@ def make_random_policy(np_random):
         return possible_moves[a]
     return random_policy
 
+'''
+    Implements the naive policy. This will be the evaluation metric for the Agent.
+    level:  0 do not search for connection
+            1 search for connected 3's
+            2 search for connected 2's
+            3 search for 1's (this is the highest level for the agent)
+'''
+def make_naive_policy(board_size, level=3, win_len=5):
+    def opponent_policy(curr_state, prev_state, prev_action):
+        opponent_policy.second_move = False
+        # check if a new games is started.
+        if np.count_nonzero(curr_state[2, :, :]) == board_size ** 2 - 1:
+            opponent_policy.second_move = True
+
+        # coords is the coordinate of the previous action.
+        coords = GomokuEnv.action_to_coordinate(curr_state, prev_action) if prev_action is not None else None
+
+        if prev_state is None:
+            '''
+                First move should be the center of the board.
+            '''
+            move = (board_size//2, board_size//2)
+        elif opponent_policy.second_move:
+            '''
+                If the AI must go second, it shouldn't think,
+                it should just go diagonal adjacent to the first
+                placed tile; diagonal into the larger area of the
+                board if one exists
+            '''
+            if coords[1] <= board_size//2:
+                dy = 1
+            else:
+                dy = -1
+
+            if coords[0] <= board_size//2:
+                dx = 1
+            else:
+                dx = -1
+            move = (coords[0] + dx, coords[1] + dy)
+            opponent_policy.second_move = False
+        else:
+            free_x, free_y = np.where(curr_state[2, :, :] == 1)
+            possible_moves = [(x, y) for x, y in zip(free_x, free_y)]
+            if len(possible_moves) == 0:
+                # no more moves
+                return None
+            '''
+                Strategy for the naive agent:
+                1. Search if there is a win opportunity.
+                2. Search if opponent is winning, if yes, then block
+                3. Search if opponent has a open stream that equals 2 less than win_len, if yes, then block
+                3. Try to extend the longest existing trend.
+            '''
+            if curr_state[0, coords[0], coords[1]] != 0:
+                color = 1
+            else:
+                color = 0
+
+            # 1: opponent position, 2: empty, 3: my position
+            my_board = np.add(np.subtract(curr_state[color, :, :], curr_state[1-color, :, :]), 2)
+            # print(my_board)
+            # check if we have a winning move
+            move = search_winning_move(my_board, '3')
+            if move is None:
+                # check if opponent has a winning move
+                move = search_winning_move(my_board, '1')
+            if move is None:
+                # check if we have open win_len - 2
+                move = search_move(my_board, '2' + ('3' * (win_len - 2)) + '2', win_len)
+            if move is None:
+                # check if opponent has open win_len - 2
+                move = search_move(my_board, '2' + ('1' * (win_len - 2)) + '2', win_len)
+
+            if move is None:
+                for i in range(2, level + 2):
+                    if win_len - i < 1:
+                        break
+                    # search for connected win_len - i stones
+                    move = search_move(my_board, '23{' + str(win_len - i) + '}', win_len - i + 1)
+                    if move is None:
+                        move = search_move(my_board, '3{' + str(win_len - i) + '}2', win_len - i + 1, False)
+                    if move is not None:
+                        break
+
+            if move is None:
+                print(np.random.choice(possible_moves))
+                move = np.random.choice(possible_moves)
+
+        return GomokuEnv.coordinate_to_action(curr_state, move)
+
+    '''
+        Search for winning move for the specified color
+        c is the color of the player. '1' represents opponent position, '3' represents my position.
+    '''
+    def search_winning_move(board, c):
+        # check if we have win_len - 1 connected and empty space to make a win
+        for i in range(win_len):
+            pattern = c * i + '2' + c * (win_len - i - 1)
+            move = search_move(board, pattern, win_len, True, i)
+            if move is not None:
+                return move
+
+        return None
+
+    '''
+        begin: if True, return begin of the pattern, otherwise return the end.
+        offset: the extra offset to adjust.
+    '''
+    def search_move(board, pattern, size, begin=True, offset=0):
+        # print('searching for pattern ' + pattern)
+        search = GomokuEnv.search_board(board, pattern, size)
+        if search is not None:
+            # print('found: ' + str(search))
+            coord = search[0]
+            direction = search[1]
+            if begin:
+                delta = (0, 0)
+            else:
+                delta = ((size - 1) * direction[0], (size - 1) * direction[1])
+
+            return [coord[0] + delta[1] + offset * direction[1], coord[1] + delta[0] + offset * direction[0]]
+
+        return None
+
+    return opponent_policy
 
 class GomokuEnv(gym.Env):
     """
@@ -93,6 +218,12 @@ class GomokuEnv(gym.Env):
         if isinstance(self.opponent, str):
             if self.opponent == 'random':
                 self.opponent_policy = make_random_policy(self.np_random)
+            elif self.opponent.startswith('naive'):
+                try:
+                    level = int(self.opponent[-1])
+                except:
+                    level = 0
+                self.opponent_policy = make_naive_policy(self.board_size, level, self.win_len)
             else:
                 raise error.Error('Unrecognized opponent policy {}'.format(self.opponent))
         else:

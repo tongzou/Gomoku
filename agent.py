@@ -60,18 +60,10 @@ class Agent:
         if isinstance(policy, str):
             if policy == 'ai':
                 assert self.L == 5, 'Only works if the winning length is 5, current winning length is : {}'.format(self.L)
-                env.opponent_policy = opponent.get_ai_policy(self.N, 0.001)
-            elif policy.startswith('naive'):
-                try:
-                    level = int(policy[-1])
-                except:
-                    level = 0
-                env.opponent_policy = opponent.get_naive_policy(self.N, level, self.L)
-            elif policy == 'random':
-                env.opponent = "random"
-                env._seed()
+                env.opponent_policy = opponent.make_ai_policy(self.N, 0.001)
             else:
-                raise error.Error('Unrecognized opponent policy {}'.format(policy))
+                env.opponent = policy
+                env.seed()
         else:
             env.opponent_policy = policy
 
@@ -83,7 +75,7 @@ class Agent:
 
     def test(self, color=GomokuEnv.BLACK, opponent="naive3", render=False, size=100):
         if self.model is None:
-            raise BaseException("This agent is not trained.")
+            raise error.Error("This agent is not trained.")
 
         env = self.create_env(color)
         self.set_opponent_policy(env, opponent)

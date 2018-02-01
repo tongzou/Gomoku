@@ -20,7 +20,6 @@ This will show a list of options to choose from.
 
 ### Todo
 
-1. move naive policy to Gomoku environment
-2. implement better opponent policy
-3. better first and second move
-4. choose_move should be stochastic
+1. implement better opponent policy
+2. better first and second move
+3. choose_move should be stochastic

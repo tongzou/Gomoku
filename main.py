@@ -2,8 +2,8 @@ from agent import cls
 from gomoku import GomokuEnv
 
 from agent_pg import PGAgent
-#agent = PGAgent(board_size=9, win_len=5, hidden=500, model="models/pg_9_500.p")
-agent = PGAgent(board_size=3, win_len=3)
+agent = PGAgent(board_size=9, win_len=5, hidden=500, model="models/pg_9_500.p")
+#agent = PGAgent(board_size=3, win_len=3, model="models/pg_3_200.p")
 
 '''from agent_torch import TorchAgent
 agent = TorchAgent()'''
@@ -31,6 +31,7 @@ def run():
         agent.train(render=False, opponent='naive3', model_threshold=0.5)
         # self-play training
         #agent.train(render=False, model_threshold=0.4)
+        input("Press Enter to continue...")
     elif mode == 2:
         agent.play(GomokuEnv.BLACK)
         input("Press Enter to continue...")
