@@ -5,7 +5,7 @@ import numpy as np
 import random
 import gym
 import cPickle as pickle
-from gomoku import GomokuEnv
+from gym_gomoku.envs import GomokuEnv
 from datetime import datetime
 
 
@@ -38,7 +38,7 @@ class TFAgent(Agent):
         while True:
             reward = self.run_episode(env, policy_grad, value_grad, sess,
                                       render=render, valid_only=valid_only, opponent=opponent)
-            print reward
+            print(reward)
 
     def policy_gradient(self):
         with tf.variable_scope("policy"):

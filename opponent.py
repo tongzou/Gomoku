@@ -1,7 +1,7 @@
 import ai.Board as b
 import ai.Eval_funcs as ef
 import numpy as np
-from gomoku import GomokuEnv as Env
+from gym_gomoku.envs import GomokuEnv as Env
 
 '''
     This is the opponent using classic AI written by Oren Finard. The files are in the opponent directory.

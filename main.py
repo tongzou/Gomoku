@@ -1,5 +1,5 @@
 from agent import cls
-from gomoku import GomokuEnv
+from gym_gomoku.envs import GomokuEnv
 
 from agent_pg import PGAgent
 agent = PGAgent(board_size=9, win_len=5, hidden=500, model="models/pg_9_500.p")

@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from gym import error
-from gomoku import GomokuEnv
+from gym_gomoku.envs import GomokuEnv
 import random
 import os
 from agent import Agent

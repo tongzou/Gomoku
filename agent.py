@@ -1,6 +1,6 @@
 import gym
 from gym import error
-from gomoku import GomokuEnv
+from gym_gomoku.envs import GomokuEnv
 import opponent
 import os
 import time
