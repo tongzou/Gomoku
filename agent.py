@@ -35,7 +35,7 @@ class Agent:
             print('registering new gym env id: ' + id)
             gym.envs.registration.register(
                 id=id,
-                entry_point='gomoku:GomokuEnv',
+                entry_point='gym_gomoku.envs:GomokuEnv',
                 kwargs={
                     'player_color': 'black',
                     'opponent': 'random',
