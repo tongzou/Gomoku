@@ -19,7 +19,7 @@ def make_ai_policy(board_size, tlimit):
             move = ef.firstmove(board)
             opponent_policy.second_move = False
         else:
-            coords = Env.action_to_coordinate(curr_state, prev_action)
+            coords = Env.action_to_coordinate(board_size, prev_action)
             board = board.move(coords)
             if opponent_policy.second_move:
                 move = ef.secondmove(board)

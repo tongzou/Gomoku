@@ -127,7 +127,7 @@ class Agent:
                     return
 
                 action = [action[0] - 1, action[1] - 1]
-                action = GomokuEnv.coordinate_to_action(observation, action)
+                action = GomokuEnv.coordinate_to_action(self.N, action)
             else:
                 time.sleep(1)
                 action = self.choose_move(observation, self.model, color)
