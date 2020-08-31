@@ -12,6 +12,8 @@ This project requires **openAI Gym** library installed
 
 ### Run
 
+This project depends on the `gym-gomoku` gym environment. Please install that first: https://github.com/tongzou/gym-gomoku. 
+
 In a terminal or command window, navigate to the top-level project directory `Gomoku/` (that contains this README) and run one of the following commands:
 
 ```python main.py```  
